@@ -400,6 +400,14 @@
  <div id="scrollToTop" class="scrollToTop mbr-arrow-up"><a style="text-align: center;"><i class="mbr-arrow-up-icon mbr-arrow-up-icon-cm cm-icon cm-icon-smallarrow-up"></i></a></div>
     <input name="animation" type="hidden">
 
+<!-- 歌曲信息卡片 -->
+<div id="music-card" class="music-card">
+  <div class="song-cover-wrapper">
+    <img src="assets/images/zhuanji_Tupian.jpg" alt="歌曲封面" class="song-cover">
+  </div>
+  <p id="song-status" class="song-status">正在播放《悠忽舞于梦中》</p>
+</div>
+
 <!-- 悬浮音乐图标按钮 -->
 <div id="music-button" class="music-button paused">
   🎵
@@ -417,7 +425,7 @@
       right: 20px;
       width: 60px;
       height: 60px;
-      background: linear-gradient(135deg, rgba(255, 182, 193, 0.6), rgba(173, 216, 230, 0.6));
+      background: linear-gradient(135deg, rgba(255, 182, 193, 0.3), rgba(173, 216, 230, 0.6));
       border-radius: 50%;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
       backdrop-filter: blur(10px);
@@ -427,14 +435,7 @@
       line-height: 60px;
       font-size: 30px;
       color: white;
-      opacity: 0.9;
       transition: transform 0.3s ease, opacity 0.3s ease;
-  }
-
-  /* 悬停时增加透明度和阴影效果 */
-  .music-button:hover {
-      opacity: 1;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
   }
 
   /* 播放时旋转动画 */
@@ -451,32 +452,78 @@
           transform: rotate(360deg);
       }
   }
-</style>
 
+  /* 歌曲信息卡片样式 */
+  .music-card {
+      position: fixed;
+      bottom: 100px;
+      right: 20px;
+      width: 220px;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 20px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      backdrop-filter: blur(15px);
+      font-family: 'Arial', sans-serif;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(20px);
+      transition: all 0.6s ease;
+  }
+
+  /* 卡片展开时的样式 */
+  .music-card.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+  }
+
+  .song-cover-wrapper {
+      width: 100%;
+      height: 120px;
+      overflow: hidden;
+      border-radius: 15px;
+      clip-path: inset(0 round 15px);
+  }
+
+  .song-cover {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+  }
+
+  .song-status {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #000000;
+  }
+</style>
 
 <!-- 脚本 -->
 <script>
   const musicButton = document.getElementById('music-button');
   const audioPlayer = document.getElementById('audio-player');
+  const musicCard = document.getElementById('music-card');
+  const songStatus = document.getElementById('song-status');
 
   // 初始音量设置为30%
   audioPlayer.volume = 0.3;
 
-  // 点击按钮切换播放和暂停
+  // 点击按钮切换播放和暂停，并控制卡片的显示和隐藏
   musicButton.addEventListener('click', function () {
       if (audioPlayer.paused) {
           audioPlayer.play();
           musicButton.classList.add('playing');  // 播放时旋转
+          musicCard.classList.add('show');       // 展开卡片
+          songStatus.textContent = "正在播放《悠忽舞于梦中》";
       } else {
           audioPlayer.pause();
           musicButton.classList.remove('playing');  // 暂停时停止旋转
-      }
-  });
-
-  // 确保音量不能超过30%
-  audioPlayer.addEventListener('volumechange', function () {
-      if (audioPlayer.volume > 0.3) {
-          audioPlayer.volume = 0.3;  // 限制最大音量为30%
+          setTimeout(() => {
+              musicCard.classList.remove('show');  // 延迟收起卡片
+          }, 3000);
+          songStatus.textContent = "已暂停《悠忽舞于梦中》";
       }
   });
 
@@ -489,9 +536,6 @@
       musicButton.classList.remove('playing');
   });
 </script>
-
-
-
 
 
   </body>
