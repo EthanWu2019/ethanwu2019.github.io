@@ -323,7 +323,7 @@
     <input name="animation" type="hidden">
 
 	<!-- 悬浮音乐图标按钮 -->
-<div id="music-button" class="music-button paused">
+<div id="music-button" class="music-button">
     🎵
 </div>
 
@@ -349,12 +349,14 @@
         line-height: 60px;
         font-size: 30px;
         color: white;
+        animation: spin 5s linear infinite;
         transition: transform 0.3s ease, opacity 0.3s ease;
     }
 
-    /* 播放时旋转动画 */
-    .music-button.playing {
-        animation: spin 5s linear infinite;
+    /* 暂停时停止旋转 */
+    .paused {
+        animation-play-state: paused;
+        opacity: 0.7;
     }
 
     /* 旋转动画 */
@@ -373,26 +375,31 @@
     const musicButton = document.getElementById('music-button');
     const audioPlayer = document.getElementById('audio-player');
 
+    // 页面加载时静音自动播放
+    window.addEventListener('load', function () {
+        audioPlayer.volume = 0;  // 静音
+        audioPlayer.play().then(() => {
+            // 在播放成功后设置正常音量
+            setTimeout(() => {
+                audioPlayer.volume = 0.7;
+            }, 500);
+        }).catch(err => {
+            console.warn('自动播放被阻止：', err);
+        });
+    });
+
     // 点击按钮切换播放和暂停
     musicButton.addEventListener('click', function () {
         if (audioPlayer.paused) {
             audioPlayer.play();
-            musicButton.classList.add('playing');  // 播放时旋转
+            musicButton.classList.remove('paused');  // 播放时旋转
         } else {
             audioPlayer.pause();
-            musicButton.classList.remove('playing');  // 暂停时停止旋转
+            musicButton.classList.add('paused');  // 暂停时停止旋转
         }
     });
-
-    // 确保按钮在音乐播放时旋转
-    audioPlayer.addEventListener('play', function () {
-        musicButton.classList.add('playing');
-    });
-
-    audioPlayer.addEventListener('pause', function () {
-        musicButton.classList.remove('playing');
-    });
 </script>
+
 
   </body>
 </html>
