@@ -321,5 +321,78 @@
   
  <div id="scrollToTop" class="scrollToTop mbr-arrow-up"><a style="text-align: center;"><i class="mbr-arrow-up-icon mbr-arrow-up-icon-cm cm-icon cm-icon-smallarrow-up"></i></a></div>
     <input name="animation" type="hidden">
+
+	<!-- 悬浮音乐图标按钮 -->
+<div id="music-button" class="music-button paused">
+    🎵
+</div>
+
+<!-- 音频文件 -->
+<audio id="audio-player" src="assets/music/悠忽舞于梦中.mp3" loop></audio>
+
+<!-- 样式 -->
+<style>
+    /* 音乐按钮样式 */
+    .music-button {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, rgba(255, 182, 193, 0.8), rgba(173, 216, 230, 0.8));
+        border-radius: 50%;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(10px);
+        border: none;
+        cursor: pointer;
+        text-align: center;
+        line-height: 60px;
+        font-size: 30px;
+        color: white;
+        transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    /* 播放时旋转动画 */
+    .music-button.playing {
+        animation: spin 5s linear infinite;
+    }
+
+    /* 旋转动画 */
+    @keyframes spin {
+        from {
+            transform: rotate(0deg);
+        }
+        to {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+
+<!-- 脚本 -->
+<script>
+    const musicButton = document.getElementById('music-button');
+    const audioPlayer = document.getElementById('audio-player');
+
+    // 点击按钮切换播放和暂停
+    musicButton.addEventListener('click', function () {
+        if (audioPlayer.paused) {
+            audioPlayer.play();
+            musicButton.classList.add('playing');  // 播放时旋转
+        } else {
+            audioPlayer.pause();
+            musicButton.classList.remove('playing');  // 暂停时停止旋转
+        }
+    });
+
+    // 确保按钮在音乐播放时旋转
+    audioPlayer.addEventListener('play', function () {
+        musicButton.classList.add('playing');
+    });
+
+    audioPlayer.addEventListener('pause', function () {
+        musicButton.classList.remove('playing');
+    });
+</script>
+
   </body>
 </html>
