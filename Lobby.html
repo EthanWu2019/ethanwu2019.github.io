@@ -401,7 +401,7 @@
     <input name="animation" type="hidden">
 
 <!-- 悬浮音乐图标按钮 -->
-<div id="music-button" class="music-button">
+<div id="music-button" class="music-button paused">
   🎵
 </div>
 
@@ -417,24 +417,29 @@
       right: 20px;
       width: 60px;
       height: 60px;
-      background: linear-gradient(135deg, rgba(255, 182, 193, 0.8), rgba(173, 216, 230, 0.8));
+      background: linear-gradient(135deg, rgba(255, 182, 193, 0.6), rgba(173, 216, 230, 0.6));
       border-radius: 50%;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
       backdrop-filter: blur(10px);
-      border: none;
+      border: 1px solid rgba(255, 255, 255, 0.4);
       cursor: pointer;
       text-align: center;
       line-height: 60px;
       font-size: 30px;
       color: white;
-      animation: spin 5s linear infinite;
+      opacity: 0.9;
       transition: transform 0.3s ease, opacity 0.3s ease;
   }
 
-  /* 暂停时停止旋转 */
-  .paused {
-      animation-play-state: paused;
-      opacity: 0.7;
+  /* 悬停时增加透明度和阴影效果 */
+  .music-button:hover {
+      opacity: 1;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  /* 播放时旋转动画 */
+  .music-button.playing {
+      animation: spin 5s linear infinite;
   }
 
   /* 旋转动画 */
@@ -448,35 +453,44 @@
   }
 </style>
 
+
 <!-- 脚本 -->
 <script>
   const musicButton = document.getElementById('music-button');
   const audioPlayer = document.getElementById('audio-player');
 
-  // 页面加载时静音自动播放
-  window.addEventListener('load', function () {
-      audioPlayer.volume = 0;  // 静音
-      audioPlayer.play().then(() => {
-          // 在播放成功后设置正常音量
-          setTimeout(() => {
-              audioPlayer.volume = 0.4;
-          }, 500);
-      }).catch(err => {
-          console.warn('自动播放被阻止：', err);
-      });
-  });
+  // 初始音量设置为30%
+  audioPlayer.volume = 0.3;
 
   // 点击按钮切换播放和暂停
   musicButton.addEventListener('click', function () {
       if (audioPlayer.paused) {
           audioPlayer.play();
-          musicButton.classList.remove('paused');  // 播放时旋转
+          musicButton.classList.add('playing');  // 播放时旋转
       } else {
           audioPlayer.pause();
-          musicButton.classList.add('paused');  // 暂停时停止旋转
+          musicButton.classList.remove('playing');  // 暂停时停止旋转
       }
   });
+
+  // 确保音量不能超过30%
+  audioPlayer.addEventListener('volumechange', function () {
+      if (audioPlayer.volume > 0.3) {
+          audioPlayer.volume = 0.3;  // 限制最大音量为30%
+      }
+  });
+
+  // 确保按钮在音乐播放时旋转
+  audioPlayer.addEventListener('play', function () {
+      musicButton.classList.add('playing');
+  });
+
+  audioPlayer.addEventListener('pause', function () {
+      musicButton.classList.remove('playing');
+  });
 </script>
+
+
 
 
 
