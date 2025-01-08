@@ -33,8 +33,19 @@
   <div class="container-fluid">
     <div class="row">
       <div class="content-wrap col-12 col-md-12">
-        <h1 class="mbr-section-title mbr-fonts-style mbr-white mb-4 display-1">
-          <strong><br>Sincerely </strong><br><strong>Yours</strong></h1>
+        <h1 class="mbr-section-title mbr-fonts-style mbr-white mb-4 display-1"
+            style="
+                background: linear-gradient(135deg, #89CFF0, #6a5acd, #e066ff, #ff69b4);
+                background-size: 200% 200%;
+                -webkit-background-clip: text;
+                background-clip: text;
+                -webkit-text-fill-color: transparent;
+                text-shadow: 0 0 15px rgba(255, 255, 255, 0.6), 0 0 30px rgba(173, 216, 230, 0.4);
+                animation: gradientFlow 8s ease infinite;
+            ">
+            <strong><br>Sincerely </strong><br><strong>Yours</strong>
+        </h1>
+          
         
         <p class="mbr-fonts-style mbr-text mbr-white mb-4 display-7">一个兴趣使然的 WashU 学生乐队</p>
         <div class="mbr-section-btn"><a class="btn btn-white-outline display-7" href="Sincerely_Yours.html#features06-4d">can can need</a></div>
@@ -353,6 +364,19 @@
   
   <!-- 样式 -->
   <style>
+
+    @keyframes gradientFlow {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
     body {
         max-width: 100%;
         overflow-x: hidden;
