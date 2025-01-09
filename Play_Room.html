@@ -210,53 +210,64 @@
         <h2>番剧列表</h2>
         <p id="search-result" class="search-result"></p>
         <div class="anime-list" id="anime-list">
+            <!-- 番剧项：败北女角太多了 -->
             <div class="anime-item">
                 <img src="assets/play_room_images/baiquannvzhu.jpg" alt="败北女角太多了">
                 <h3>败北女角太多了！ 負けヒロインが多すぎる！</h3>
                 <p class="description">平常担任班上背景人物的我──温水和彦，偶然目击人气女同学八奈见杏菜被男生甩掉的失恋现场。「他明明说过要娶我当新娘，这不过分吗？」...</p>
                 <div class="button-container">
                     <span class="toggle-description">展开</span>
-                    <a href="fanju/baiquannvzhu.html">查看详情</a>
+                    <!-- 修改后的“查看详情”链接 -->
+                    <a href="detail.html?id=baiquannvzhu">查看详情</a>
                 </div>
             </div>
+    
+            <!-- 番剧项：Girls Band Cry -->
             <div class="anime-item">
                 <img src="assets/play_room_images/gbc.png" alt="Girls Band Cry">
                 <h3>Girls Band Cry</h3>
                 <p class="description">高中二年级时退学，独自一人以上大学為目标前往东京的主角...</p>
                 <div class="button-container">
                     <span class="toggle-description">展开</span>
-                    <a href="attack_on_titan.html">查看详情</a>
+                    <a href="detail.html?id=gbc">查看详情</a>
                 </div>
             </div>
+    
+            <!-- 番剧项：BanG Dream! It's MyGO!!!!! -->
             <div class="anime-item">
                 <img src="assets/play_room_images/mygo.png" alt="BanG Dream! It's MyGO!!!!!">
                 <h3>BanG Dream! It's MyGO!!!!!</h3>
                 <p class="description">你能，和我组一辈子乐队吗？”高一的春末...</p>
                 <div class="button-container">
                     <span class="toggle-description">展开</span>
-                    <a href="jujutsu_kaisen.html">查看详情</a>
+                    <a href="detail.html?id=mygo">查看详情</a>
                 </div>
             </div>
+    
+            <!-- 番剧项：BanG Dream! Ave Mujica -->
             <div class="anime-item">
                 <img src="assets/play_room_images/ave_mujica.png" alt="BanG Dream! Ave Mujica">
                 <h3>BanG Dream! Ave Mujica</h3>
                 <p class="description">“我不是说过了吗？把剩下的人生交给我...”</p>
                 <div class="button-container">
                     <span class="toggle-description">展开</span>
-                    <a href="spy_x_family.html">查看详情</a>
+                    <a href="detail.html?id=ave_mujica">查看详情</a>
                 </div>
             </div>
+    
+            <!-- 番剧项：Arcane -->
             <div class="anime-item">
                 <img src="assets/play_room_images/arcane.png" alt="Arcane">
                 <h3>Arcane</h3>
                 <p class="description">本片作为英雄联盟官方动画剧集，讲述的是在充满蒸汽朋克气息的乌托邦...</p>
                 <div class="button-container">
                     <span class="toggle-description">展开</span>
-                    <a href="chainsaw_man.html">查看详情</a>
+                    <a href="detail.html?id=arcane">查看详情</a>
                 </div>
             </div>
         </div>
     </div>
+    
     <script>
         const track = document.querySelector('.carousel-track');
         const slides = Array.from(track.children);
