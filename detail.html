@@ -59,7 +59,7 @@
     
         /* 左侧详情区域宽度调整 */
         .details {
-            flex: 0.8; /* 调整宽度比例，让放映区更大 */
+            flex: 0.8;
             background-color: #333;
             padding: 20px;
             border-radius: 15px;
@@ -74,7 +74,7 @@
         .season-buttons {
             margin-top: 20px;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); /* 自动调整按钮宽度 */
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
             gap: 10px;
         }
     
@@ -95,7 +95,7 @@
     
         /* 右侧放映区样式 */
         .iframe-container {
-            flex: 2.2; /* 调整宽度比例，让放映区更大 */
+            flex: 2.2;
             background-color: #000000;
             border-radius: 15px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
@@ -111,18 +111,34 @@
         /* 响应式布局：移动端样式 */
         @media screen and (max-width: 768px) {
             .content {
-                flex-direction: column; /* 移动端改为上下排列 */
+                flex-direction: column;
             }
     
             .iframe-container iframe {
-                height: 300px; /* 调整移动端 iframe 高度 */
+                height: 300px;
             }
     
             .details {
                 margin-bottom: 20px;
             }
+    
+            .back-button {
+                width: 50px;
+                height: 50px;
+                top: 10px; /* 将按钮位置调整到标题上方 */
+            }
+    
+            .back-button img {
+                width: 30px;
+                height: 30px;
+            }
+    
+            header {
+                padding-top: 60px; /* 给标题上方留出空间，避免遮挡 */
+            }
         }
     </style>
+    
     
     
 </head>
