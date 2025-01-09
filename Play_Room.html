@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>番剧放映厅</title>
     <style>
-        
+                
+                /* 全局样式 */
         body {
             font-family: 'Arial', sans-serif;
             background-color: #1c1c1c;
@@ -13,18 +14,24 @@
             padding: 0;
             color: #fff;
         }
+
+        /* 顶部导航样式 */
         header {
             background-color: #282c34;
             color: #fff;
             padding: 20px;
             text-align: center;
+            border-radius: 15px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
         }
+
+        /* 搜索框样式 */
         .search-box {
             display: flex;
             justify-content: center;
             margin: 20px 0;
         }
+
         .search-box input {
             width: 80%;
             max-width: 600px;
@@ -35,6 +42,8 @@
             font-size: 16px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         }
+
+        /* 轮播图样式 */
         .carousel {
             position: relative;
             width: 100%;
@@ -44,21 +53,25 @@
             border-radius: 15px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
         }
+
         .carousel-track {
             display: flex;
             transition: transform 0.5s ease-in-out;
         }
+
         .carousel-slide {
             min-width: 100%;
             position: relative;
             transition: transform 0.5s ease-in-out;
         }
+
         .carousel-slide img {
             width: 100%;
             height: 300px;
             object-fit: cover;
             border-radius: 15px;
         }
+
         .carousel-caption {
             position: absolute;
             bottom: 10px;
@@ -69,6 +82,7 @@
             color: #fff;
             font-size: 14px;
         }
+
         .carousel-buttons {
             position: absolute;
             top: 50%;
@@ -77,6 +91,7 @@
             justify-content: space-between;
             transform: translateY(-50%);
         }
+
         .carousel-button {
             background-color: rgba(255, 255, 255, 0.5);
             border: none;
@@ -85,9 +100,12 @@
             border-radius: 50%;
             transition: background-color 0.3s;
         }
+
         .carousel-button:hover {
             background-color: rgba(255, 255, 255, 0.8);
         }
+
+        /* 容器样式 */
         .container {
             max-width: 1200px;
             margin: 20px auto;
@@ -96,22 +114,29 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
             border-radius: 15px;
         }
+
+        /* 标题样式 */
         h2 {
             text-align: center;
             color: #ffffff;
         }
+
+        /* 搜索结果样式 */
         .search-result {
             text-align: center;
             color: #99ccff;
             font-size: 18px;
             margin-bottom: 20px;
         }
+
+        /* 番剧列表样式 */
         .anime-list {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 20px;
             justify-items: center;
         }
+
         .anime-item {
             background: rgba(60, 60, 60, 0.8);
             border-radius: 15px;
@@ -125,6 +150,7 @@
             max-width: 220px;
             transition: box-shadow 0.3s;
         }
+
         .anime-item img {
             width: 100%;
             height: 300px;
@@ -134,15 +160,17 @@
             background-image: linear-gradient(to bottom right, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.4));
             transition: transform 0.3s, border-color 0.3s;
         }
+
         .anime-item img:hover {
             transform: scale(1.05);
             border-color: rgba(255, 255, 255, 0.2);
         }
-        
+
         .anime-item h3 {
             margin: 10px;
             color: #ffffff;
         }
+
         .anime-item p {
             margin: 10px;
             color: #d0d0d0;
@@ -152,10 +180,13 @@
             white-space: nowrap;
             transition: max-height 0.3s;
         }
+
         .anime-item p.expanded {
             max-height: none;
             white-space: normal;
         }
+
+        /* 按钮样式 */
         .button-container {
             display: flex;
             justify-content: space-between;
@@ -163,6 +194,7 @@
             margin: 10px;
             margin-top: auto;
         }
+
         .toggle-description {
             text-align: center;
             color: #99ccff;
@@ -172,9 +204,11 @@
             background: rgba(153, 204, 255, 0.2);
             transition: background 0.3s;
         }
+
         .toggle-description:hover {
             background: rgba(153, 204, 255, 0.5);
         }
+
         .anime-item a {
             text-align: center;
             padding: 10px;
@@ -184,9 +218,41 @@
             border-radius: 10px;
             transition: background 0.3s;
         }
+
         .anime-item a:hover {
             background: linear-gradient(135deg, #6e304f, #161e4f);
         }
+
+        /* 响应式布局：移动端样式 */
+        @media screen and (max-width: 768px) {
+            .search-box {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .search-box input {
+                width: 90%;
+                font-size: 14px;
+            }
+
+            .carousel-slide img {
+                height: 200px;
+            }
+
+            .anime-list {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .anime-item {
+                max-width: 100%;
+            }
+
+            .anime-item img {
+                height: 200px;
+            }
+        }
+
     </style>
 </head>
 <body>
