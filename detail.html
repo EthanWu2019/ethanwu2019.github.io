@@ -12,6 +12,7 @@
             padding: 20px;
             color: #fff;
         }
+
         header {
             background-color: #282c34;
             color: #fff;
@@ -19,12 +20,40 @@
             text-align: center;
             border-radius: 15px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            position: relative;
         }
+
+        .back-button {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 70px;
+            height: 70px;
+            background-color: #838383;
+            border-radius: 50%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            cursor: pointer;
+        }
+
+        .back-button img {
+            width: 40px;
+            height: 40px;
+        }
+
         .content {
             display: flex;
             gap: 20px;
             margin-top: 20px;
         }
+
         .details {
             flex: 1;
             background-color: #333;
@@ -32,12 +61,15 @@
             border-radius: 15px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
         }
+
         .details h2 {
             color: #ff99cc;
         }
+
         .season-buttons {
             margin-top: 20px;
         }
+
         .season-buttons button {
             margin: 5px;
             padding: 10px 20px;
@@ -48,9 +80,11 @@
             cursor: pointer;
             transition: background-color 0.3s;
         }
+
         .season-buttons button:hover {
             background-color: #ff66b3;
         }
+
         .iframe-container {
             flex: 2;
             background-color: #222;
@@ -58,6 +92,7 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
             overflow: hidden;
         }
+
         iframe {
             width: 100%;
             height: 600px;
@@ -66,7 +101,13 @@
     </style>
 </head>
 <body>
+
     <header>
+        
+    <!-- 返回番剧列表按钮 -->
+    <a href="Play_Room.html" class="back-button">
+        <img src="assets/images/home_icon.png" alt="返回首页">
+    </a>
         <h1 id="anime-title">番剧详情</h1>
     </header>
 
@@ -153,5 +194,6 @@
             document.getElementById('anime-description').textContent = "请返回番剧列表页面，选择一个有效的番剧。";
         }
     </script>
+
 </body>
 </html>
