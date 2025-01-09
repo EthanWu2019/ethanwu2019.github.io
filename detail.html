@@ -12,7 +12,7 @@
             padding: 20px;
             color: #fff;
         }
-
+    
         header {
             background-color: #282c34;
             color: #fff;
@@ -26,7 +26,7 @@
             gap: 10px;
             position: relative;
         }
-
+    
         .back-button {
             position: absolute;
             left: 20px;
@@ -42,63 +42,71 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
             cursor: pointer;
         }
-
+    
         .back-button img {
             width: 40px;
             height: 40px;
         }
-
+    
+        /* 主体内容排版优化 */
         .content {
             display: flex;
             gap: 20px;
             margin-top: 20px;
         }
-
+    
+        /* 左侧详情区域宽度减小 */
         .details {
-            flex: 1;
+            flex: 0.8; /* 调整宽度比例，让放映区更大 */
             background-color: #333;
             padding: 20px;
             border-radius: 15px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
         }
-
+    
         .details h2 {
-            color: #ff99cc;
+            color: #ffffff;
         }
-
+    
+        /* 季和集数按钮样式优化 */
         .season-buttons {
             margin-top: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); /* 自动调整按钮宽度 */
+            gap: 10px;
         }
-
+    
         .season-buttons button {
-            margin: 5px;
-            padding: 10px 20px;
-            background-color: #ff99cc;
+            padding: 8px 12px;
+            font-size: 14px;
+            background-color: #9e5ad1;
             color: #fff;
             border: none;
             border-radius: 10px;
             cursor: pointer;
             transition: background-color 0.3s;
         }
-
+    
         .season-buttons button:hover {
             background-color: #ff66b3;
         }
-
+    
+        /* 右侧放映区扩大 */
         .iframe-container {
-            flex: 2;
-            background-color: #222;
+            flex: 2.2; /* 调整宽度比例，让放映区更大 */
+            background-color: #000000;
             border-radius: 15px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
             overflow: hidden;
         }
-
+    
         iframe {
             width: 100%;
-            height: 600px;
+            height: 600px; /* 调整播放区高度 */
             border: none;
         }
     </style>
+    
 </head>
 <body>
 
@@ -152,6 +160,30 @@
                             { title: "第10集", url: "https://drive.google.com/file/d/1Jb2GBfAZrDkhs0AcPET-lbdx_2Rs6mZi/preview" },
                             { title: "第11集", url: "https://drive.google.com/file/d/1KEBZ03I2ByflgoXkKNOUD_kkmqnuVA5D/preview" },
                             { title: "第12集", url: "https://drive.google.com/file/d/1qM0W_lzDDOBsYhn5z0Yr_pGUnoCfYHWL/preview" }
+                        ]
+                    }
+                ]
+            },
+            gbc: {
+                title: "Girls Band Cry",
+                description: "高中二年级时退学，独自一人以上大学為目标前往东京的主角，故事讲述音乐与青春的追逐之旅。",
+                seasons: [
+                    {
+                        season: "第一季",
+                        episodes: [
+                            { title: "第1集", url: "https://drive.google.com/file/d/1e6Fo-9JqBCHleKAXU3J6JpEy6T1exBaL/preview" },
+                            { title: "第2集", url: "https://drive.google.com/file/d/1SqJCv7fPkS-NizhHVG-DehKVcANwqVu0/preview" },
+                            { title: "第3集", url: "https://drive.google.com/file/d/1cRynih_UL1n7SkUmaRjdHxzsiZx2xpl8/preview" },
+                            { title: "第4集", url: "https://drive.google.com/file/d/13C7V9YJ8sW7WyGSD27N_VyAyMOf6W-HK/preview" },
+                            { title: "第5集", url: "https://drive.google.com/file/d/1SCJd5G0IXQKxV5U_F2jcP6tN_JzKjyuT/preview" },
+                            { title: "第6集", url: "https://drive.google.com/file/d/1Ty_Mnu_W4HJhl_ymlhCTBCAqfUtnZ4X6/preview" },
+                            { title: "第7集", url: "https://drive.google.com/file/d/1CQjyFr5cGv8CsMVRX0seHTEkReJAT4qO/preview" },
+                            { title: "第8集", url: "https://drive.google.com/file/d/1LoxjCqX9ZayiuNNS_hfIvShI8-e-T6n9/preview" },
+                            { title: "第9集", url: "https://drive.google.com/file/d/17m4uda17h5-pkV-HKM3Pe0nFMuoaUPXt/preview" },
+                            { title: "第10集", url: "https://drive.google.com/file/d/1zd71JNyUj_DFjf0wpEuLTfKh3K7_hn_3/preview" },
+                            { title: "第11集", url: "https://drive.google.com/file/d/15ZaafIC6exMtpV-7u9YLkmX2bILQhMlb/preview" },
+                            { title: "第12集", url: "https://drive.google.com/file/d/1mPgRlzs_dSUES3uFWm8kOdNtaHs2XamN/preview" },
+                            { title: "第13集", url: "https://drive.google.com/file/d/1AX5U1nLLlQIdWuS8pD1GfUX-5qY8ZKu1/preview" }
                         ]
                     }
                 ]
