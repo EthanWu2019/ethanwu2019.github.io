@@ -654,6 +654,25 @@
     }
 
 
+      // 当页面可见性变化时触发的事件
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+        // 用户离开页面时动态改变标题
+        document.title = "不要离开我～😭";
+        titleTimer = setInterval(() => {
+            document.title = document.title === "不要离开我～😭" ? "快回来！🥺" : "不要离开我～😭";
+        }, 1000);
+    } else {
+        // 用户回到页面时恢复原始标题
+        clearInterval(titleTimer);
+        document.title = "欢迎回来！🎉";
+        setTimeout(() => {
+            document.title = originalTitle;
+        }, 1000);
+    }
+});
+
+
   </script>
 
 
