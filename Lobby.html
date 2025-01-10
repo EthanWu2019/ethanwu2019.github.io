@@ -589,7 +589,19 @@
 
 setInterval(createSnowflake, 200);
 
+let konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight'];
+    let pressedKeys = [];
 
+    document.addEventListener('keydown', (e) => {
+        pressedKeys.push(e.key);
+        pressedKeys = pressedKeys.slice(-konamiCode.length);
+
+        if (JSON.stringify(pressedKeys) === JSON.stringify(konamiCode)) {
+            alert('🎉 恭喜你找到了彩蛋哦！');
+            // 在这里可以执行你想要的任何操作，比如跳转页面、改变样式、播放音乐等
+            document.body.style.backgroundColor = "#ff66b3"; // 例如：改变背景颜色
+        }
+    });
 
 
 </script>

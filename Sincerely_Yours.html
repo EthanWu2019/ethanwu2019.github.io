@@ -521,6 +521,22 @@
             transform: scale(0);
         }
     }
+    .emoji {
+        position: absolute;
+        font-size: 40px;
+        animation: fall 3s linear infinite;
+    }
+
+    @keyframes fall {
+        0% {
+            top: -50px;
+            opacity: 1;
+        }
+        100% {
+            top: 100vh;
+            opacity: 0;
+        }
+    }
   </style>
   
   <!-- 脚本 -->
@@ -603,6 +619,39 @@
         }, 1000);
     });
 
+    let konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight'];
+    let pressedKeys = [];
+    let emojis = ['🎸', '🎷', '🎺', '🥁', '🎻', '🎤', '🎹', '🪕', '🎼'];
+
+    document.addEventListener('keydown', (e) => {
+        pressedKeys.push(e.key);
+        pressedKeys = pressedKeys.slice(-konamiCode.length);
+
+        if (JSON.stringify(pressedKeys) === JSON.stringify(konamiCode)) {
+            triggerEasterEgg();
+        }
+    });
+
+    function triggerEasterEgg() {
+        alert('🎉 彩蛋触发成功！音乐从天而降！');
+        for (let i = 0; i < 100; i++) {
+            createFallingEmoji();
+        }
+    }
+
+    function createFallingEmoji() {
+        let emoji = document.createElement('div');
+        emoji.classList.add('emoji');
+        emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        emoji.style.left = Math.random() * 100 + 'vw';
+        emoji.style.animationDuration = Math.random() * 2 + 3 + 's';
+        document.body.appendChild(emoji);
+
+        // 定时清理掉落的 emoji
+        setTimeout(() => {
+            emoji.remove();
+        }, 5000);
+    }
 
 
   </script>
