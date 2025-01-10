@@ -253,12 +253,29 @@
                 height: 200px;
             }
         }
+        .trail {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #bf66ff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #ff66b3;
+            pointer-events: none;
+            animation: fadeOut 1s forwards;
+        }
+    
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                transform: scale(0);
+            }
+        }
 
     </style>
 </head>
 <body>
     <header>
-        <h1>欢迎来到番剧放映厅</h1>
+        <h1 id="typing-text"></h1>
     </header>
     <div class="search-box">
         <input type="text" id="search-input" placeholder="搜索番剧...">
@@ -356,6 +373,20 @@
     
     
     <script>
+        const text = "欢迎来到番剧放映厅！";
+        let index = 0;
+    
+        function typeText() {
+            document.getElementById('typing-text').textContent = text.slice(0, index);
+            index++;
+            if (index <= text.length) {
+                setTimeout(typeText, 100);
+            }
+        }
+    
+        typeText();
+
+
         const track = document.querySelector('.carousel-track');
         const slides = Array.from(track.children);
         const nextButton = document.querySelector('.next');
@@ -435,6 +466,18 @@
                     document.title = originalTitle;
                 }, 1000);
             }
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            const trail = document.createElement('div');
+            trail.classList.add('trail');
+            trail.style.left = e.pageX + 'px';
+            trail.style.top = e.pageY + 'px';
+            document.body.appendChild(trail);
+    
+            setTimeout(() => {
+                trail.remove();
+            }, 1000);
         });
 
     </script>

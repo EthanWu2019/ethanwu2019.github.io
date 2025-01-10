@@ -25,7 +25,7 @@
   
 </head>
 <body>
-  
+    <div id="loading-bar"></div>
 	<section data-bs-version="5.1" class="header18 cid-ut5LbdzcrN mbr-fullscreen" data-bg-video="https://www.youtube.com/watch?v=71jUS_jRyEk" id="header18-40">
   
 
@@ -478,11 +478,68 @@
         margin-top: 10px;
         font-size: 14px;
         color: #000000;
+
+    }
+
+    .snowflake {
+        position: fixed;
+        top: -10px;
+        font-size: 24px;
+        color: white;
+        animation: fall linear infinite;
+    }
+
+    @keyframes fall {
+        to {
+            transform: translateY(100vh);
+            opacity: 0;
+        }
+    }
+    #loading-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 0;
+        height: 4px;
+        background-color: #ff66b3;
+        transition: width 0.2s;
+    }
+    .trail {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        background-color: #bf66ff;
+        border-radius: 50%;
+        box-shadow: 0 0 10px #ff66b3;
+        pointer-events: none;
+        animation: fadeOut 1s forwards;
+    }
+
+    @keyframes fadeOut {
+        to {
+            opacity: 0;
+            transform: scale(0);
+        }
     }
   </style>
   
   <!-- 脚本 -->
   <script>
+
+    let progress = 0;
+    const loadingBar = document.getElementById('loading-bar');
+
+    function updateProgress() {
+        progress += Math.random() * 5;
+        loadingBar.style.width = progress + '%';
+
+        if (progress < 100) {
+            requestAnimationFrame(updateProgress);
+        }
+    }
+
+    updateProgress();
+
     const musicButton = document.getElementById('music-button');
     const audioPlayer = document.getElementById('audio-player');
     const musicCard = document.getElementById('music-card');
@@ -516,6 +573,38 @@
     audioPlayer.addEventListener('pause', function () {
         musicButton.classList.remove('playing');
     });
+
+    function createSnowflake() {
+        const snowflake = document.createElement('div');
+        snowflake.classList.add('snowflake');
+        snowflake.textContent = '❄️';
+        document.body.appendChild(snowflake);
+
+        snowflake.style.left = Math.random() * window.innerWidth + 'px';
+        snowflake.style.animationDuration = Math.random() * 4 + 3 + 's';
+        snowflake.style.opacity = Math.random();
+
+        setTimeout(() => {
+            snowflake.remove();
+        }, 7000);
+    }
+
+    setInterval(createSnowflake, 200);
+
+    document.addEventListener('mousemove', (e) => {
+        const trail = document.createElement('div');
+        trail.classList.add('trail');
+        trail.style.left = e.pageX + 'px';
+        trail.style.top = e.pageY + 'px';
+        document.body.appendChild(trail);
+
+        setTimeout(() => {
+            trail.remove();
+        }, 1000);
+    });
+
+
+
   </script>
 
 

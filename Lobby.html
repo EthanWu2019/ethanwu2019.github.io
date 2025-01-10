@@ -498,6 +498,21 @@
       font-size: 14px;
       color: #000000;
   }
+
+  .snowflake {
+    position: fixed;
+    top: -10px;
+    font-size: 24px;
+    color: white;
+    animation: fall linear infinite;
+}
+
+@keyframes fall {
+    to {
+        transform: translateY(100vh);
+        opacity: 0;
+    }
+}
 </style>
 
 <!-- 脚本 -->
@@ -535,6 +550,48 @@
   audioPlayer.addEventListener('pause', function () {
       musicButton.classList.remove('playing');
   });
+  const originalTitle = document.title;
+
+  let titleTimer;
+
+  // 当页面可见性变化时触发的事件
+  document.addEventListener("visibilitychange", () => {
+      if (document.hidden) {
+          // 用户离开页面时动态改变标题
+          document.title = "不要离开我～😭";
+          titleTimer = setInterval(() => {
+              document.title = document.title === "不要离开我～😭" ? "快回来！🥺" : "不要离开我～😭";
+          }, 1000);
+      } else {
+          // 用户回到页面时恢复原始标题
+          clearInterval(titleTimer);
+          document.title = "欢迎回来！🎉";
+          setTimeout(() => {
+              document.title = originalTitle;
+          }, 1000);
+      }
+  });
+
+  function createSnowflake() {
+    const snowflake = document.createElement('div');
+    snowflake.classList.add('snowflake');
+    snowflake.textContent = '❄️';
+    document.body.appendChild(snowflake);
+
+    snowflake.style.left = Math.random() * window.innerWidth + 'px';
+    snowflake.style.animationDuration = Math.random() * 4 + 3 + 's';
+    snowflake.style.opacity = Math.random();
+
+    setTimeout(() => {
+        snowflake.remove();
+    }, 5000);
+}
+
+setInterval(createSnowflake, 200);
+
+
+
+
 </script>
 
 
