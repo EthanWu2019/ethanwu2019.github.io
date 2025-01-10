@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎉 彩蛋界面</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            background: linear-gradient(135deg, #ff7eb9, #ff65a3, #7afcff);
+            background-size: 300% 300%;
+            animation: gradientBG 12s infinite alternate;
+            overflow: hidden;
+            color: white;
+            text-align: center;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        h1 {
+            margin-top: 50px;
+            font-size: 48px;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
+        }
+
+        .menu-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        .menu-item {
+            width: 150px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 15px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transform: perspective(1000px) rotateY(0deg);
+            transition: transform 0.5s, background 0.3s;
+        }
+
+        .menu-item:hover {
+            transform: perspective(1000px) rotateY(180deg);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* 烟花效果 */
+        .firework {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+            animation: explode 1s linear forwards;
+        }
+
+        @keyframes explode {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(5);
+                opacity: 0;
+            }
+        }
+
+        /* 掉落乐器效果 */
+        .emoji {
+            position: absolute;
+            font-size: 40px;
+            animation: fall 3s linear infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                top: -50px;
+                opacity: 1;
+            }
+            100% {
+                top: 100vh;
+                opacity: 0;
+            }
+        }
+
+        /* 弹窗效果 */
+        .modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            display: none;
+        }
+
+        .modal h2 {
+            margin-bottom: 20px;
+            font-size: 28px;
+            color: #333;
+        }
+
+        .modal button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background: #ff69b4;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal button:hover {
+            background: #ff1493;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🎉 你找到了隐藏的彩蛋界面！</h1>
+    <div class="menu-container">
+        <div class="menu-item" onclick="triggerFireworks()">🎸 乐器</div>
+        <div class="menu-item" onclick="triggerFireworks()">🎷 萨克斯</div>
+        <div class="menu-item" onclick="triggerFireworks()">🥁 鼓</div>
+        <div class="menu-item" onclick="triggerFireworks()">🎤 麦克风</div>
+        <div class="menu-item" onclick="showModal('你发现了一个隐藏的惊喜！')">🎹 钢琴</div>
+    </div>
+
+    <div class="modal" id="modal">
+        <h2 id="modal-text">彩蛋弹窗</h2>
+        <button onclick="hideModal()">关闭</button>
+    </div>
+
+    <script>
+        // 掉落乐器图标
+        let emojis = ['🎸', '🎷', '🎺', '🥁', '🎻', '🎤', '🎹', '🪕', '🎼'];
+        function createFallingEmoji() {
+            let emoji = document.createElement('div');
+            emoji.classList.add('emoji');
+            emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+            emoji.style.left = Math.random() * 100 + 'vw';
+            emoji.style.animationDuration = Math.random() * 2 + 3 + 's';
+            document.body.appendChild(emoji);
+
+            setTimeout(() => {
+                emoji.remove();
+            }, 5000);
+        }
+        setInterval(createFallingEmoji, 300);
+
+        // 触发烟花效果
+        function triggerFireworks() {
+            for (let i = 0; i < 10; i++) {
+                const firework = document.createElement('div');
+                firework.classList.add('firework');
+                firework.style.left = Math.random() * window.innerWidth + 'px';
+                firework.style.top = Math.random() * window.innerHeight + 'px';
+                document.body.appendChild(firework);
+
+                setTimeout(() => {
+                    firework.remove();
+                }, 1000);
+            }
+        }
+
+        // 显示弹窗
+        function showModal(message) {
+            const modal = document.getElementById('modal');
+            const modalText = document.getElementById('modal-text');
+            modalText.textContent = message;
+            modal.style.display = 'block';
+        }
+
+        // 隐藏弹窗
+        function hideModal() {
+            const modal = document.getElementById('modal');
+            modal.style.display = 'none';
+        }
+    </script>
+
+</body>
+</html>
