@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <title>番剧详情</title>
+    <link rel="icon" type="image/png" href="assets/images/play_room_icon.png">
     <style>
         /* 全局样式 */
         body {
@@ -331,6 +333,31 @@
             document.getElementById('anime-title').textContent = "未找到番剧详情";
             document.getElementById('anime-description').textContent = "请返回番剧列表页面，选择一个有效的番剧。";
         }
+
+
+                // 保存原始标题
+        const originalTitle = document.title;
+
+        let titleTimer;
+
+        // 当页面可见性变化时触发的事件
+        document.addEventListener("visibilitychange", () => {
+            if (document.hidden) {
+                // 用户离开页面时动态改变标题
+                document.title = "不要离开我～😭";
+                titleTimer = setInterval(() => {
+                    document.title = document.title === "不要离开我～😭" ? "快回来！🥺" : "不要离开我～😭";
+                }, 1000);
+            } else {
+                // 用户回到页面时恢复原始标题
+                clearInterval(titleTimer);
+                document.title = "欢迎回来！🎉";
+                setTimeout(() => {
+                    document.title = originalTitle;
+                }, 1000);
+            }
+        });
+
     </script>
 
 </body>
