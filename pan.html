@@ -5,140 +5,144 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>乐队网盘</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #121212;
-            color: #f1f1f1;
-            margin: 0;
-            padding: 20px;
-        }
+            /* 页面基础样式 */
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #121212;
+        color: #f1f1f1;
+        margin: 0;
+        padding: 20px;
+        overflow-x: hidden; /* 防止页面横向滚动 */
+    }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background-color: #1e1e1e;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        }
+    /* 容器样式 */
+    .container {
+        max-width: 100%;
+        width: 100%;
+        margin: 0 auto;
+        background-color: #1e1e1e;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        box-sizing: border-box; /* 确保内边距不会导致元素超出容器 */
+    }
 
-        h1 {
-            text-align: center;
-            color: #ffffff;
-            margin-bottom: 20px;
-        }
+    /* 标题样式 */
+    h1 {
+        text-align: center;
+        color: #ffffff;
+        margin-bottom: 20px;
+    }
 
-        .breadcrumb {
-            font-size: 14px;
-            color: #bbbbbb;
-            margin-bottom: 20px;
-        }
+    /* 路径导航栏样式 */
+    .breadcrumb {
+        font-size: 14px;
+        color: #bbbbbb;
+        margin-bottom: 20px;
+    }
 
-        .breadcrumb span {
-            cursor: pointer;
-            color: #66bbff;
-            margin-right: 8px;
-        }
+    .breadcrumb span {
+        cursor: pointer;
+        color: #66bbff;
+        margin-right: 8px;
+    }
 
-        .breadcrumb span:hover {
-            text-decoration: underline;
-        }
+    .breadcrumb span:hover {
+        text-decoration: underline;
+    }
 
+    /* 文件管理器布局优化 */
+    .file-manager {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 24px;
+    }
+
+    /* 文件和文件夹卡片样式 */
+    .item {
+        background-color: #2a2a2a;
+        border-radius: 12px;
+        padding: 16px;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        box-sizing: border-box;
+    }
+
+    /* 图标大小 */
+    .item img {
+        width: 64px;
+        height: 64px;
+        margin-bottom: 12px;
+    }
+
+    /* 文件名和文件夹名 */
+    .item span {
+        display: block;
+        font-size: 14px;
+        color: #e0e0e0;
+        word-break: break-word;
+    }
+
+    /* 鼠标悬停效果 */
+    .item:hover {
+        background-color: #333333;
+    }
+
+    /* 链接样式 */
+    .item a {
+        text-decoration: none;
+        color: #66bbff;
+    }
+
+    .item a:hover {
+        text-decoration: underline;
+    }
+
+    /* 导航按钮样式 */
+    .nav-buttons {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    .nav-buttons button {
+        background-color: #333333;
+        color: #f1f1f1;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.3s ease;
+    }
+
+    .nav-buttons button:hover {
+        background-color: #444444;
+    }
+
+    /* 移动端适配 */
+    @media screen and (max-width: 768px) {
         .file-manager {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr); /* PC端每行显示4个 */
-            gap: 24px;
+            grid-template-columns: repeat(2, 1fr);
         }
 
         .item {
-            width: 180px;
-            background-color: #2a2a2a;
-            border-radius: 12px;
-            padding: 16px;
-            text-align: center;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
-            cursor: pointer;
-            transition: background-color 0.3s ease;
+            padding: 12px;
         }
-        
-        /* 图标大小 */
+
         .item img {
-            width: 64px;
-            height: 64px;
-            margin-bottom: 12px;
+            width: 48px;
+            height: 48px;
+            margin-bottom: 8px;
         }
-        
-        /* 文件名和文件夹名 */
+
         .item span {
-            display: block;
-            font-size: 14px;
-            color: #e0e0e0;
-            word-break: break-word;
+            font-size: 12px;
         }
+    }
 
-        .item:hover {
-            background-color: #333333;
-        }
-
-
-        /* 移动端适配 */
-        @media screen and (max-width: 1024px) {
-            .file-manager {
-                grid-template-columns: repeat(4, 1fr);
-            }
-        }
-        
-        /* 移动端适配（每行显示2个） */
-        @media screen and (max-width: 768px) {
-            .file-manager {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        
-            .item {
-                width: 140px;
-                padding: 12px;
-            }
-        
-            .item img {
-                width: 48px;
-                height: 48px;
-                margin-bottom: 8px;
-            }
-        
-            .item span {
-                font-size: 12px;
-            }
-        }
-
-        .item a {
-            text-decoration: none;
-            color: #66bbff;
-        }
-
-        .item a:hover {
-            text-decoration: underline;
-        }
-
-        .nav-buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-
-        .nav-buttons button {
-            background-color: #333333;
-            color: #f1f1f1;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.3s ease;
-        }
-
-        .nav-buttons button:hover {
-            background-color: #444444;
-        }
     </style>
 </head>
 <body>
