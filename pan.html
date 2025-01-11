@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>乐队网盘</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #f1f1f1;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: #1e1e1e;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #ffffff;
+            margin-bottom: 20px;
+        }
+
+        .breadcrumb {
+            font-size: 14px;
+            color: #bbbbbb;
+            margin-bottom: 20px;
+        }
+
+        .breadcrumb span {
+            cursor: pointer;
+            color: #66bbff;
+            margin-right: 8px;
+        }
+
+        .breadcrumb span:hover {
+            text-decoration: underline;
+        }
+
+        .file-manager {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+        }
+
+        .item {
+            width: 150px;
+            background-color: #2a2a2a;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .item:hover {
+            background-color: #333333;
+        }
+
+        .item img {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 12px;
+        }
+
+        .item span {
+            display: block;
+            font-size: 14px;
+            color: #e0e0e0;
+            word-break: break-word;
+        }
+
+        .item a {
+            text-decoration: none;
+            color: #66bbff;
+        }
+
+        .item a:hover {
+            text-decoration: underline;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .nav-buttons button {
+            background-color: #333333;
+            color: #f1f1f1;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+
+        .nav-buttons button:hover {
+            background-color: #444444;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>乐队网盘</h1>
+        <!-- 导航按钮 -->
+        <div class="nav-buttons">
+            <button onclick="goToMainMenu()">返回主菜单</button>
+            <button onclick="goToPreviousMenu()">返回上一菜单</button>
+        </div>
+        <!-- 路径导航栏 -->
+        <div class="breadcrumb" id="breadcrumb">全部文件 /</div>
+
+        <!-- 文件管理器 -->
+        <div class="file-manager" id="fileManager"></div>
+    </div>
+
+    <script>
+        // 文件系统的实际数据
+        const fileSystem = {
+            "全部文件": {
+                "谱子": {
+                    "春日影": {
+                        "春日影主音.gp": "Pan_Folder/谱子/春日影/春日影主音.gp",
+                        "春日影主音.pdf": "Pan_Folder/谱子/春日影/春日影主音.pdf"
+                    },
+                    "空之箱": {
+                        "空之箱节奏吉他.pdf": "Pan_Folder/谱子/空之箱/空之箱节奏吉他.pdf"
+                    },
+                    "翻滚岩石": {
+                        "翻滚岩石节奏.gp": "Pan_Folder/谱子/翻滚岩石/翻滚岩石节奏.gp",
+                        "翻滚岩石节奏.pdf": "Pan_Folder/谱子/翻滚岩石/翻滚岩石节奏.pdf"
+                    }
+                },
+                "翻滚岩石节奏.gp": "Pan_Folder/1月31日WashU学生会春晚节目选单.pdf",
+            }
+        };
+
+        let currentPath = ["全部文件"];
+
+        // 初始化文件管理器
+        function loadFiles(path) {
+            const fileManager = document.getElementById('fileManager');
+            fileManager.innerHTML = '';
+
+            let currentFolder = fileSystem;
+            for (const part of path) {
+                currentFolder = currentFolder[part];
+            }
+
+            for (const name in currentFolder) {
+                if (typeof currentFolder[name] === 'object') {
+                    // 文件夹
+                    const folderDiv = document.createElement('div');
+                    folderDiv.classList.add('item');
+                    folderDiv.innerHTML = `
+                        <img src="https://cdn-icons-png.flaticon.com/512/716/716784.png" alt="Folder Icon">
+                        <span>${name}</span>
+                    `;
+                    folderDiv.ondblclick = () => {
+                        currentPath.push(name);
+                        updateBreadcrumb();
+                        loadFiles(currentPath);
+                    };
+                    fileManager.appendChild(folderDiv);
+                } else {
+                    // 文件
+                    const fileDiv = document.createElement('div');
+                    fileDiv.classList.add('item');
+                    fileDiv.innerHTML = `
+                        <img src="https://cdn-icons-png.flaticon.com/512/337/337946.png" alt="File Icon">
+                        <span><a href="${currentFolder[name]}" download>${name}</a></span>
+                    `;
+                    fileManager.appendChild(fileDiv);
+                }
+            }
+        }
+
+        // 更新路径导航栏
+        function updateBreadcrumb() {
+            const breadcrumb = document.getElementById('breadcrumb');
+            breadcrumb.innerHTML = '';
+            currentPath.forEach((part, index) => {
+                const span = document.createElement('span');
+                span.textContent = part;
+                span.onclick = () => {
+                    currentPath = currentPath.slice(0, index + 1);
+                    updateBreadcrumb();
+                    loadFiles(currentPath);
+                };
+                breadcrumb.appendChild(span);
+                if (index < currentPath.length - 1) {
+                    breadcrumb.innerHTML += ' / ';
+                }
+            });
+        }
+
+        // 返回主菜单
+        function goToMainMenu() {
+            currentPath = ["全部文件"];
+            updateBreadcrumb();
+            loadFiles(currentPath);
+        }
+
+        // 返回上一菜单
+        function goToPreviousMenu() {
+            if (currentPath.length > 1) {
+                currentPath.pop();
+                updateBreadcrumb();
+                loadFiles(currentPath);
+            }
+        }
+
+        // 初始化
+        updateBreadcrumb();
+        loadFiles(currentPath);
+    </script>
+</body>
+</html>
