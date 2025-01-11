@@ -14,6 +14,57 @@
         padding: 20px;
         overflow-x: hidden; /* 防止页面横向滚动 */
     }
+    /* 提示文字样式 */
+    .hint {
+        font-size: 12px;
+        color: #bbbbbb;
+        text-align: center;
+        margin-top: -10px;
+        margin-bottom: 20px;
+        opacity: 0.8;
+        transition: opacity 0.3s ease;
+    }
+
+    .hint:hover {
+        opacity: 1;
+    }
+
+    /* 漂浮气泡提示样式 */
+    .floating-hint {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: rgba(50, 50, 50, 0.9);
+        color: #ffffff;
+        padding: 12px 20px;
+        border-radius: 20px;
+        font-size: 14px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        z-index: 999;
+        opacity: 0;
+        animation: fadeIn 1s forwards, fadeOut 5s 4s forwards;
+        cursor: pointer;
+    }
+
+    /* 气泡出现和消失的动画 */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeOut {
+        to {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+    }
+
 
     /* 容器样式 */
     .container {
@@ -152,6 +203,7 @@
         .item span {
             font-size: 12px;
         }
+
     }
 
     </style>
@@ -166,6 +218,7 @@
         </div>
         <!-- 路径导航栏 -->
         <div class="breadcrumb" id="breadcrumb">全部文件 /</div>
+
 
         <!-- 文件管理器 -->
         <div class="file-manager" id="fileManager"></div>
@@ -322,6 +375,27 @@ function createSnow() {
             }
         `;
         document.head.appendChild(style);
+
+
+                // 创建漂浮气泡提示
+        function createFloatingHint() {
+            const hint = document.createElement('div');
+            hint.classList.add('floating-hint');
+            hint.textContent = '进入文件夹请双击';
+            hint.onclick = () => hint.remove(); // 点击时移除气泡提示
+            document.body.appendChild(hint);
+
+            // 5秒后自动删除提示
+            setTimeout(() => {
+                if (document.body.contains(hint)) {
+                    hint.remove();
+                }
+            }, 9000);
+        }
+
+        // 页面加载时创建提示气泡
+        window.onload = createFloatingHint;
+
 
 
     </script>
