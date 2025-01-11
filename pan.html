@@ -29,41 +29,46 @@
         opacity: 1;
     }
 
-    /* 漂浮气泡提示样式 */
+    /* 居中漂浮气泡提示样式 */
     .floating-hint {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
+        position: absolute;
+        top: 35%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: auto;
+        max-width: 320px;
         background-color: rgba(50, 50, 50, 0.9);
         color: #ffffff;
         padding: 12px 20px;
         border-radius: 20px;
         font-size: 14px;
+        text-align: center;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        z-index: 999;
         opacity: 0;
         animation: fadeIn 1s forwards, fadeOut 5s 4s forwards;
         cursor: pointer;
     }
 
-    /* 气泡出现和消失的动画 */
+    /* 气泡动画效果 */
     @keyframes fadeIn {
         from {
             opacity: 0;
-            transform: translateY(20px);
+            transform: translate(-50%, -60%);
         }
         to {
             opacity: 1;
-            transform: translateY(0);
+            transform: translate(-50%, -50%);
         }
     }
 
     @keyframes fadeOut {
         to {
             opacity: 0;
-            transform: translateY(20px);
+            transform: translate(-50%, -40%);
         }
     }
+
+
 
 
     /* 容器样式 */
@@ -211,6 +216,7 @@
 <body>
     <div class="container">
         <h1>乐队网盘</h1>
+        <div class="floating-hint" id="floatingHint"></div>
         <!-- 导航按钮 -->
         <div class="nav-buttons">
             <button onclick="goToMainMenu()">返回主菜单</button>
@@ -378,12 +384,11 @@ function createSnow() {
 
 
                 // 创建漂浮气泡提示
+        // 创建漂浮气泡提示
         function createFloatingHint() {
-            const hint = document.createElement('div');
-            hint.classList.add('floating-hint');
+            const hint = document.getElementById('floatingHint');
             hint.textContent = '进入文件夹请双击';
             hint.onclick = () => hint.remove(); // 点击时移除气泡提示
-            document.body.appendChild(hint);
 
             // 5秒后自动删除提示
             setTimeout(() => {
@@ -395,7 +400,6 @@ function createSnow() {
 
         // 页面加载时创建提示气泡
         window.onload = createFloatingHint;
-
 
 
     </script>
