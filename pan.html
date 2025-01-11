@@ -45,13 +45,13 @@
         }
 
         .file-manager {
-            display: flex;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(6, 1fr); /* PC端每行显示4个 */
             gap: 24px;
         }
 
         .item {
-            width: 150px;
+            width: 180px;
             background-color: #2a2a2a;
             border-radius: 12px;
             padding: 16px;
@@ -60,22 +60,54 @@
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
-
-        .item:hover {
-            background-color: #333333;
-        }
-
+        
+        /* 图标大小 */
         .item img {
             width: 64px;
             height: 64px;
             margin-bottom: 12px;
         }
-
+        
+        /* 文件名和文件夹名 */
         .item span {
             display: block;
             font-size: 14px;
             color: #e0e0e0;
             word-break: break-word;
+        }
+
+        .item:hover {
+            background-color: #333333;
+        }
+
+
+        /* 移动端适配 */
+        @media screen and (max-width: 1024px) {
+            .file-manager {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        
+        /* 移动端适配（每行显示2个） */
+        @media screen and (max-width: 768px) {
+            .file-manager {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        
+            .item {
+                width: 140px;
+                padding: 12px;
+            }
+        
+            .item img {
+                width: 48px;
+                height: 48px;
+                margin-bottom: 8px;
+            }
+        
+            .item span {
+                font-size: 12px;
+            }
         }
 
         .item a {
@@ -225,22 +257,28 @@
         loadFiles(currentPath);
 
 
-                // 创建雪花特效
-        function createSnow() {
-            const snowflake = document.createElement('div');
-            snowflake.classList.add('snowflake');
-            snowflake.style.left = Math.random() * 100 + 'vw';
-            snowflake.style.animationDuration = Math.random() * 3 + 2 + 's';
-            snowflake.innerHTML = '❄️';
-            document.body.appendChild(snowflake);
+        // 创建雪花特效
+function createSnow() {
+    const snowflake = document.createElement('div');
+    snowflake.classList.add('snowflake');
 
-            setTimeout(() => {
-                snowflake.remove();
-            }, 5000);
-        }
+    // 随机位置和大小
+    snowflake.style.left = Math.random() * 100 + 'vw';
+    snowflake.style.opacity = Math.random() * 0.8 + 0.2;
+    snowflake.style.fontSize = Math.random() * 10 + 10 + 'px';
+    snowflake.style.animationDuration = Math.random() * 3 + 3 + 's';
 
-        // 每隔 300 毫秒创建一个雪花
-        setInterval(createSnow, 300);
+    snowflake.innerHTML = '❄️';
+    document.body.appendChild(snowflake);
+
+    // 雪花在 6 秒后自动删除
+    setTimeout(() => {
+        snowflake.remove();
+    }, 6000);
+}
+
+        // 每隔 200 毫秒创建一个雪花
+        setInterval(createSnow, 200);
 
         // 添加雪花样式
         const style = document.createElement('style');
@@ -248,11 +286,9 @@
             .snowflake {
                 position: fixed;
                 top: -10px;
-                font-size: 24px;
                 color: #ffffff;
-                opacity: 0.8;
                 pointer-events: none;
-                animation: fall linear;
+                animation: fall linear forwards;
             }
 
             @keyframes fall {
@@ -261,8 +297,17 @@
                     opacity: 0;
                 }
             }
+
+            /* 调整移动端的雪花效果 */
+            @media screen and (max-width: 768px) {
+                .snowflake {
+                    font-size: 8px;
+                    animation-duration: 4s;
+                }
+            }
         `;
         document.head.appendChild(style);
+
 
     </script>
 </body>
