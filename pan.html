@@ -208,6 +208,24 @@
         .item span {
             font-size: 12px;
         }
+        .floating-hint {
+            position: absolute;
+            top: 30%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: auto;
+            max-width: 320px;
+            background-color: rgba(50, 50, 50, 0.9);
+            color: #ffffff;
+            padding: 12px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            animation: fadeIn 1s forwards, fadeOut 5s 4s forwards;
+            cursor: pointer;
+        }
 
     }
 
