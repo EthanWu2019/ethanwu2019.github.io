@@ -50,19 +50,9 @@
 
 ---
 
-### 🚀 Latest Blog Posts
-
-<!-- BLOG-POST-LIST:START -->
-- [Example Blog Post 1](https://yourblog.com/post1)
-- [Example Blog Post 2](https://yourblog.com/post2)
-- [Example Blog Post 3](https://yourblog.com/post3)
-<!-- BLOG-POST-LIST:END -->
-
----
 
 ### 📫 Connect with me:
 <p align="center">
   <a href="https://github.com/EthanWu2019"><img src="https://img.shields.io/badge/GitHub-%23121011.svg?style=for-the-badge&logo=github&logoColor=white" /></a>
-  <a href="https://twitter.com/yourtwitter"><img src="https://img.shields.io/badge/Twitter-%231DA1F2.svg?style=for-the-badge&logo=twitter&logoColor=white" /></a>
-  <a href="https://linkedin.com/in/yourlinkedin"><img src="https://img.shields.io/badge/LinkedIn-%230077B5.svg?style=for-the-badge&logo=linkedin&logoColor=white" /></a>
+  <a href="https://www.linkedin.com/in/chengze-wu-3398a0224/"><img src="https://img.shields.io/badge/LinkedIn-%230077B5.svg?style=for-the-badge&logo=linkedin&logoColor=white" /></a>
 </p>
