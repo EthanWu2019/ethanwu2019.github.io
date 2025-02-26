@@ -277,6 +277,9 @@
                         "梦中人节奏吉他无solo.pdf": "Pan_Folder/谱子/梦中人/梦中人节奏吉他无solo.pdf",
                     }
                 },
+                "音声":{
+                    "空之箱原速纯人声.wav": "Pan_Folder/音声/空之箱原速纯人声.wav",
+                },
                 "1月31日WashU学生会春晚节目选单.pdf": "Pan_Folder/1月31日WashU学生会春晚节目选单.pdf",
             }
         };
@@ -309,17 +312,36 @@
                     };
                     fileManager.appendChild(folderDiv);
                 } else {
-                    // 文件
+                    // 文件，使用 getFileIcon() 获取图标
                     const fileDiv = document.createElement('div');
                     fileDiv.classList.add('item');
                     fileDiv.innerHTML = `
-                        <img src="https://cdn-icons-png.flaticon.com/512/337/337946.png" alt="File Icon">
+                        <img src="${getFileIcon(name)}" alt="File Icon">
                         <span><a href="${currentFolder[name]}" download>${name}</a></span>
                     `;
                     fileManager.appendChild(fileDiv);
                 }
             }
         }
+
+        // 新增辅助函数，根据文件扩展名返回相应图标的 URL
+        function getFileIcon(filename) {
+            const lower = filename.toLowerCase();
+            if (lower.endsWith('.pdf')) {
+                // PDF 图标
+                return "https://cdn-icons-png.flaticon.com/512/337/337946.png";
+            } else if (lower.endsWith('.wav')) {
+                // WAV 图标（请确保链接有效）
+                return "https://cdn-icons-png.flaticon.com/512/7412/7412943.png";
+            } else if (lower.endsWith('.gp')) {
+                // GP 文件：如果没有专用图标，则使用默认的文档图标（非 PDF）
+                return "https://cdn-icons-png.flaticon.com/512/16327/16327145.png";
+            } else {
+                // 其他文件类型的默认图标（可以根据需要更换）
+                return "https://cdn-icons-png.flaticon.com/512/607/607674.png";
+            }
+        }
+
 
         // 更新路径导航栏
         function updateBreadcrumb() {
