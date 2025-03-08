@@ -192,10 +192,17 @@ h1 {
     border-radius: 8px;
     cursor: pointer;
     font-size: 14px;
-    transition: background-color 0.3s ease;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 .nav-buttons button:hover {
     background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+.nav-buttons button:active {
+    transform: scale(0.95);
+    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.2);
 }
 
 @media screen and (max-width: 768px) {
