@@ -6,229 +6,226 @@
     <title>乐队网盘</title>
     <link rel="icon" type="image/png" href="assets/images/cloud_drive.png">
     <style>
-            /* 页面基础样式 */
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #121212;
-        color: #f1f1f1;
-        margin: 0;
-        padding: 20px;
-        overflow-x: hidden; /* 防止页面横向滚动 */
-    }
-    /* 提示文字样式 */
-    .hint {
-        font-size: 12px;
-        color: #bbbbbb;
-        text-align: center;
-        margin-top: -10px;
-        margin-bottom: 20px;
-        opacity: 0.8;
-        transition: opacity 0.3s ease;
-    }
+    /* 页面基础样式 */
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #e0f7fa, #ffe0e9);
+    color: #333333;
+    margin: 0;
+    padding: 20px;
+    overflow-x: hidden; /* 防止页面横向滚动 */
+}
 
-    .hint:hover {
+/* 提示文字样式 */
+.hint {
+    font-size: 12px;
+    color: #666666;
+    text-align: center;
+    margin-top: -10px;
+    margin-bottom: 20px;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+.hint:hover {
+    opacity: 1;
+}
+
+/* 居中漂浮气泡提示样式 */
+.floating-hint {
+    position: absolute;
+    top: 35%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: auto;
+    max-width: 320px;
+    background-color: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    color: #333333;
+    padding: 12px 20px;
+    border-radius: 20px;
+    font-size: 14px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    animation: fadeIn 1s forwards, fadeOut 5s 4s forwards;
+    cursor: pointer;
+}
+
+/* 气泡动画效果 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -60%);
+    }
+    to {
         opacity: 1;
+        transform: translate(-50%, -50%);
     }
+}
 
-    /* 居中漂浮气泡提示样式 */
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+        transform: translate(-50%, -40%);
+    }
+}
+
+/* 容器样式 */
+.container {
+    max-width: 80%;
+    width: 100%;
+    margin: 0 auto;
+    background-color: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(10px);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+    margin-top: 70px;
+}
+
+/* 标题样式 */
+h1 {
+    text-align: center;
+    color: #817f7f; /* 淡粉色 */
+    margin-bottom: 20px;
+}
+
+/* 路径导航栏样式 */
+.breadcrumb {
+    font-size: 14px;
+    color: #666666;
+    margin-bottom: 20px;
+}
+
+.breadcrumb span {
+    cursor: pointer;
+    color: #64b5f6; /* 淡蓝色 */
+    margin-right: 8px;
+}
+
+.breadcrumb span:hover {
+    text-decoration: underline;
+}
+
+/* 文件管理器布局优化 */
+.file-manager {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 24px;
+}
+
+/* 文件和文件夹卡片样式 */
+.item {
+    background-color: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(8px);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-sizing: border-box;
+}
+
+.item img {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 12px;
+}
+
+.item span {
+    display: block;
+    font-size: 14px;
+    color: #555555;
+    word-break: break-word;
+}
+
+.item:hover {
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+/* 链接样式 */
+.item a {
+    text-decoration: none;
+    color: #64b5f6;
+}
+
+.item a:hover {
+    text-decoration: underline;
+}
+
+/* 导航按钮样式 */
+.nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.nav-buttons button {
+    background-color: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(8px);
+    color: #333333;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.nav-buttons button:hover {
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+/* 移动端适配 */
+@media screen and (max-width: 768px) {
+    .container {
+        max-width: 100%;
+        width: 100%;
+        margin: 0 auto;
+        background-color: rgba(255, 255, 255, 0.5);
+        backdrop-filter: blur(10px);
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        box-sizing: border-box;
+    }
+    .file-manager {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .item {
+        padding: 12px;
+    }
+    .item img {
+        width: 48px;
+        height: 48px;
+        margin-bottom: 8px;
+    }   
+    .item span {
+        font-size: 12px;
+    }
     .floating-hint {
         position: absolute;
-        top: 35%;
+        top: 30%;
         left: 50%;
         transform: translate(-50%, -50%);
         width: auto;
         max-width: 320px;
-        background-color: rgba(50, 50, 50, 0.9);
-        color: #ffffff;
+        background-color: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(10px);
+        color: #333333;
         padding: 12px 20px;
         border-radius: 20px;
         font-size: 14px;
         text-align: center;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         opacity: 0;
         animation: fadeIn 1s forwards, fadeOut 5s 4s forwards;
         cursor: pointer;
     }
-
-    /* 气泡动画效果 */
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translate(-50%, -60%);
-        }
-        to {
-            opacity: 1;
-            transform: translate(-50%, -50%);
-        }
-    }
-
-    @keyframes fadeOut {
-        to {
-            opacity: 0;
-            transform: translate(-50%, -40%);
-        }
-    }
-
-
-
-
-    /* 容器样式 */
-    .container {
-        max-width: 80%;
-        width: 100%;
-        margin: 0 auto;
-        background-color: #1e1e1e;
-        padding: 30px;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        box-sizing: border-box; /* 确保内边距不会导致元素超出容器 */
-        margin-top: 70px;
-    }
-
-    /* 标题样式 */
-    h1 {
-        text-align: center;
-        color: #ffffff;
-        margin-bottom: 20px;
-    }
-
-    /* 路径导航栏样式 */
-    .breadcrumb {
-        font-size: 14px;
-        color: #bbbbbb;
-        margin-bottom: 20px;
-    }
-
-    .breadcrumb span {
-        cursor: pointer;
-        color: #66bbff;
-        margin-right: 8px;
-    }
-
-    .breadcrumb span:hover {
-        text-decoration: underline;
-    }
-
-    /* 文件管理器布局优化 */
-    .file-manager {
-        display: grid;
-        grid-template-columns: repeat(6, 1fr);
-        gap: 24px;
-    }
-
-    /* 文件和文件夹卡片样式 */
-    .item {
-        background-color: #2a2a2a;
-        border-radius: 12px;
-        padding: 16px;
-        text-align: center;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-        box-sizing: border-box;
-    }
-
-    /* 图标大小 */
-    .item img {
-        width: 64px;
-        height: 64px;
-        margin-bottom: 12px;
-    }
-
-    /* 文件名和文件夹名 */
-    .item span {
-        display: block;
-        font-size: 14px;
-        color: #e0e0e0;
-        word-break: break-word;
-    }
-
-    /* 鼠标悬停效果 */
-    .item:hover {
-        background-color: #333333;
-    }
-
-    /* 链接样式 */
-    .item a {
-        text-decoration: none;
-        color: #66bbff;
-    }
-
-    .item a:hover {
-        text-decoration: underline;
-    }
-
-    /* 导航按钮样式 */
-    .nav-buttons {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 20px;
-    }
-
-    .nav-buttons button {
-        background-color: #333333;
-        color: #f1f1f1;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 14px;
-        transition: background-color 0.3s ease;
-    }
-
-    .nav-buttons button:hover {
-        background-color: #444444;
-    }
-
-    /* 移动端适配 */
-    @media screen and (max-width: 768px) {
-        .container {
-            max-width: 100%;
-            width: 100%;
-            margin: 0 auto;
-            background-color: #1e1e1e;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            box-sizing: border-box; /* 确保内边距不会导致元素超出容器 */
-        }
-        .file-manager {
-            grid-template-columns: repeat(2, 1fr);
-        }
-
-        .item {
-            padding: 12px;
-        }
-
-        .item img {
-            width: 48px;
-            height: 48px;
-            margin-bottom: 8px;
-        }   
-
-        .item span {
-            font-size: 12px;
-        }
-        .floating-hint {
-            position: absolute;
-            top: 30%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: auto;
-            max-width: 320px;
-            background-color: rgba(50, 50, 50, 0.9);
-            color: #ffffff;
-            padding: 12px 20px;
-            border-radius: 20px;
-            font-size: 14px;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            opacity: 0;
-            animation: fadeIn 1s forwards, fadeOut 5s 4s forwards;
-            cursor: pointer;
-        }
-
-    }
+}
 
     </style>
 </head>
@@ -275,7 +272,16 @@
                     },
                     "梦中人/Dreams":{
                         "梦中人节奏吉他无solo.pdf": "Pan_Folder/谱子/梦中人/梦中人节奏吉他无solo.pdf",
-                    }
+                    },
+                    "Goodbye - toe":{
+                        "toe+-+Goodbye-Drumkit.pdf": "Pan_Folder/谱子/Goodbye - toe/toe+-+Goodbye-Drumkit.pdf",
+                        "toe+-+Goodbye-Electric_Bass.pdf": "Pan_Folder/谱子/Goodbye - toe/toe+-+Goodbye-Electric_Bass.pdf",
+                        "toe+-+Goodbye-G1.pdf": "Pan_Folder/谱子/Goodbye - toe/toe+-+Goodbye-G1.pdf",
+                        "toe+-+Goodbye-G2.pdf": "Pan_Folder/谱子/Goodbye - toe/toe+-+Goodbye-G2.pdf",
+                        "toe+-+Goodbye-Keyboard.pdf": "Pan_Folder/谱子/Goodbye - toe/toe+-+Goodbye-Keyboard.pdf",
+                        "toe+-+Goodbye-Vibraphone.pdf": "Pan_Folder/谱子/Goodbye - toe/toe+-+Goodbye-Vibraphone.pdf",
+                        "toe+-+Goodbye-Vocals.pdf": "Pan_Folder/谱子/Goodbye - toe/toe+-+Goodbye-Vocals.pdf",
+                    },
                 },
                 "音声":{
                     "空之箱原速纯人声.wav": "Pan_Folder/音声/空之箱原速纯人声.wav",
