@@ -1,234 +1,387 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>乐队网盘</title>
-    <link rel="icon" type="image/png" href="assets/images/cloud_drive.png">
-    <style>
-/* 让 html、body 充满屏幕 */
-html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>乐队网盘</title>
+  <link rel="icon" type="image/png" href="assets/images/cloud_drive.png">
+  <style>
+    /* 让 html、body 充满屏幕 */
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
 
-/* 背景在 body 上实现，去掉原有 body padding */
-body {
-    display: flex;
-    flex-direction: column;
-    background: linear-gradient(135deg, #e0f7fa, #ffe0e9);
-    color: #333;
-    overflow-x: hidden;
-}
+    /* 背景在 body 上实现，去掉原有 body padding */
+    body {
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(135deg, #e0f7fa, #ffe0e9);
+      color: #333;
+      overflow-x: hidden;
+    }
 
-/* 用 wrapper 占满可视区，内边距用来控制整体留白 */
-.wrapper {
-    flex: 1;
-    display: flex;
-    justify-content: flex-start;
-    align-items: flex-start;
-    padding: 20px;
-    box-sizing: border-box;
-    position: relative;
-}
+    /* 用 wrapper 占满可视区，内边距用来控制整体留白 */
+    .wrapper {
+      flex: 1;
+      display: flex;
+      justify-content: flex-start;
+      align-items: flex-start;
+      padding: 20px;
+      box-sizing: border-box;
+      position: relative;
+    }
 
-/* 浮动提示 */
-.floating-hint {
-    position: absolute;
-    top: 35%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: auto;
-    max-width: 320px;
-    background-color: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(10px);
-    color: #333;
-    padding: 12px 20px;
-    border-radius: 20px;
-    font-size: 14px;
-    text-align: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    opacity: 0;
-    animation: fadeIn 1s forwards, fadeOut 5s 4s forwards;
-    cursor: pointer;
-}
-@keyframes fadeIn {
-    from {
+    /* 容器本身半透明 + 毛玻璃 */
+    .container {
+      max-width: 80%;
+      width: 100%;
+      margin: 70px auto 0 auto;
+      padding: 30px;
+      border-radius: 12px;
+      background-color: rgba(255, 255, 255, 0.4);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      box-sizing: border-box;
+      position: relative; /* 让容器层级低于提示 */
+      z-index: 1;
+    }
+
+    h1 {
+      text-align: center;
+      color: #d81b60;
+      margin-bottom: 20px;
+    }
+
+    .hint {
+      font-size: 12px;
+      color: #666;
+      text-align: center;
+      margin-top: -10px;
+      margin-bottom: 20px;
+      opacity: 0.8;
+      transition: opacity 0.3s ease;
+    }
+    .hint:hover {
+      opacity: 1;
+    }
+
+    .breadcrumb {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 20px;
+    }
+    .breadcrumb span {
+      cursor: pointer;
+      color: #64b5f6;
+      margin-right: 8px;
+    }
+    .breadcrumb span:hover {
+      text-decoration: underline;
+    }
+
+    .file-manager {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 24px;
+    }
+
+    .item {
+      position: relative; 
+      overflow: hidden; 
+      background-color: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(8px);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+      transform-style: preserve-3d;
+      perspective: 2000px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .item img {
+      width: 64px;
+      height: 64px;
+      margin-bottom: 12px;
+    }
+    .item span {
+      display: block;
+      font-size: 14px;
+      color: #555;
+      word-break: break-word;
+    }
+    .item:hover {
+      transform: perspective(1000px) rotateX(5deg) rotateY(5deg) translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+    .item::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background-color: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      transition: width 0.6s ease, height 0.6s ease, opacity 0.6s ease;
+      opacity: 0;
+    }
+    .item:hover::before {
+      width: 200%;
+      height: 200%;
+      opacity: 1;
+    }
+    .item a {
+      text-decoration: none;
+      color: #64b5f6;
+    }
+    .item a:hover {
+      text-decoration: underline;
+    }
+
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .nav-buttons button {
+      background-color: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(8px);
+      color: #333;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+    .nav-buttons button:hover {
+      background-color: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+      transform: translateY(-2px);
+    }
+    .nav-buttons button:active {
+      transform: scale(0.95);
+      box-shadow: 0 3px 7px rgba(0, 0, 0, 0.2);
+    }
+
+    /* 浮动提示（居中漂浮），提高 z-index 保证在最上方 */
+    .floating-hint {
+      position: absolute;
+      top: 35%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: auto;
+      max-width: 320px;
+      background-color: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(10px);
+      color: #333;
+      padding: 12px 20px;
+      border-radius: 20px;
+      font-size: 14px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      opacity: 0;
+      animation: fadeIn 1s forwards, fadeOut 5s 4s forwards;
+      cursor: pointer;
+      z-index: 99999; /* 让提示始终在最上层 */
+    }
+    @keyframes fadeIn {
+      from {
         opacity: 0;
         transform: translate(-50%, -60%);
-    }
-    to {
+      }
+      to {
         opacity: 1;
         transform: translate(-50%, -50%);
+      }
     }
-}
-@keyframes fadeOut {
-    to {
+    @keyframes fadeOut {
+      to {
         opacity: 0;
         transform: translate(-50%, -40%);
+      }
     }
-}
 
-/* 容器本身半透明 + 毛玻璃 */
-.container {
-    max-width: 80%;
-    width: 100%;
-    margin: 70px auto 0 auto;
-    padding: 30px;
-    border-radius: 12px;
-    background-color: rgba(255, 255, 255, 0.4);
-    backdrop-filter: blur(10px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    box-sizing: border-box;
-}
+    /* 折叠式音乐播放器整体容器 */
+    .music-widget {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 280px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 20px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      font-family: 'Arial', sans-serif;
+      overflow: hidden;
+      transition: height 0.5s ease;
+      z-index: 9999;
+    }
+    /* 折叠状态下只显示顶部栏 */
+    .music-widget.collapsed {
+      height: 50px;
+    }
+    /* 展开状态下显示全部内容(可调大一些以显示完整) */
+    .music-widget.expanded {
+      height: 340px; 
+    }
 
-h1 {
-    text-align: center;
-    color: #d81b60;
-    margin-bottom: 20px;
-}
+    /* 顶部栏：折叠时也可见 */
+    .music-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 50px;
+      padding: 0 15px;
+      cursor: pointer;
+    }
+    .music-header .music-title {
+      font-size: 14px;
+      color: #333;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 70%;
+    }
+    .music-header .music-toggle-btn {
+      font-size: 18px;
+      color: #333;
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+    .music-header .music-toggle-btn:hover {
+      transform: scale(1.2);
+    }
 
-.hint {
-    font-size: 12px;
-    color: #666;
-    text-align: center;
-    margin-top: -10px;
-    margin-bottom: 20px;
-    opacity: 0.8;
-    transition: opacity 0.3s ease;
-}
-.hint:hover {
-    opacity: 1;
-}
+    /* 播放器内容区 */
+    .music-body {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      padding: 10px;
+      transition: opacity 0.3s ease;
+    }
+    /* 展开时才显示 */
+    .music-widget.expanded .music-body {
+      display: flex;
+    }
 
-.breadcrumb {
-    font-size: 14px;
-    color: #666;
-    margin-bottom: 20px;
-}
-.breadcrumb span {
-    cursor: pointer;
-    color: #64b5f6;
-    margin-right: 8px;
-}
-.breadcrumb span:hover {
-    text-decoration: underline;
-}
+    .song-cover-wrapper {
+      width: 100%;
+      height: 140px; /* 适当调大封面区 */
+      overflow: hidden;
+      border-radius: 15px;
+      clip-path: inset(0 round 15px);
+    }
+    .song-cover {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .song-status {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #000000;
+      text-align: center;
+    }
+    .player-controls {
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+    .player-controls button {
+      background-color: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(6px);
+      border: none;
+      border-radius: 8px;
+      padding: 5px 10px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+    }
+    .player-controls button:hover {
+      background-color: rgba(255, 255, 255, 0.8);
+    }
+    .progress-container {
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .progress-container span {
+      font-size: 12px;
+    }
+    .progress-bar {
+      width: 150px;
+      -webkit-appearance: none;
+      background: rgba(0,0,0,0.1);
+      height: 4px;
+      border-radius: 2px;
+      outline: none;
+      cursor: pointer;
+    }
+    .progress-bar::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #d81b60;
+      border: 2px solid #fff;
+      cursor: pointer;
+    }
 
-.file-manager {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 24px;
-}
+    /* 雪花样式 */
+    .snowflake {
+      position: fixed;
+      top: -10px;
+      color: #ffffff;
+      pointer-events: none;
+      animation: fall linear forwards;
+      z-index: 9998;
+    }
+    @keyframes fall {
+      to {
+        transform: translateY(100vh);
+        opacity: 0;
+      }
+    }
 
-.item {
-    position: relative; 
-    overflow: hidden; 
-    background-color: rgba(255, 255, 255, 0.6);
-    backdrop-filter: blur(8px);
-    border-radius: 12px;
-    padding: 16px;
-    text-align: center;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-    transform-style: preserve-3d;
-    perspective: 2000px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-.item img {
-    width: 64px;
-    height: 64px;
-    margin-bottom: 12px;
-}
-.item span {
-    display: block;
-    font-size: 14px;
-    color: #555;
-    word-break: break-word;
-}
-.item:hover {
-    transform: perspective(1000px) rotateX(5deg) rotateY(5deg) translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-}
-.item::before {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    background-color: rgba(255, 255, 255, 0.3);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-    transition: width 0.6s ease, height 0.6s ease, opacity 0.6s ease;
-    opacity: 0;
-}
-.item:hover::before {
-    width: 200%;
-    height: 200%;
-    opacity: 1;
-}
-.item a {
-    text-decoration: none;
-    color: #64b5f6;
-}
-.item a:hover {
-    text-decoration: underline;
-}
-
-.nav-buttons {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-}
-.nav-buttons button {
-    background-color: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(8px);
-    color: #333;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-}
-.nav-buttons button:hover {
-    background-color: rgba(255, 255, 255, 0.9);
-    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
-    transform: translateY(-2px);
-}
-.nav-buttons button:active {
-    transform: scale(0.95);
-    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.2);
-}
-
-@media screen and (max-width: 768px) {
-    .wrapper {
+    /* 移动端适配 */
+    @media screen and (max-width: 768px) {
+      .wrapper {
         padding: 20px;
-    }
-    .container {
+      }
+      .container {
         max-width: 100%;
         margin: 30px auto 0 auto;
         padding: 20px;
-    }
-    .file-manager {
+      }
+      .file-manager {
         grid-template-columns: repeat(2, 1fr);
-    }
-    .item {
+      }
+      .item {
         padding: 12px;
-    }
-    .item img {
+      }
+      .item img {
         width: 48px;
         height: 48px;
         margin-bottom: 8px;
-    }
-    .item span {
+      }
+      .item span {
         font-size: 12px;
-    }
-    .floating-hint {
+      }
+      .floating-hint {
         top: 30%;
         left: 50%;
         transform: translate(-50%, -50%);
@@ -244,199 +397,377 @@ h1 {
         opacity: 0;
         animation: fadeIn 1s forwards, fadeOut 5s 4s forwards;
         cursor: pointer;
+        z-index: 99999;
+      }
+
+      .music-widget {
+        width: 90%;
+        right: 5%;
+      }
+      .music-widget.expanded {
+        height: 380px; /* 移动端更大高度，避免被遮挡 */
+      }
+      .song-cover-wrapper {
+        height: 160px; /* 移动端封面更大一些 */
+      }
     }
-}
-    </style>
+  </style>
 </head>
 <body>
-    <div class="wrapper">
-        <div class="floating-hint" id="floatingHint"></div>
-        <div class="container">
-            <h1>乐队网盘</h1>
-            <div class="nav-buttons">
-                <button onclick="goToMainMenu()">返回主菜单</button>
-                <button onclick="goToPreviousMenu()">返回上一菜单</button>
-            </div>
-            <div class="breadcrumb" id="breadcrumb">全部文件 /</div>
-            <div class="file-manager" id="fileManager"></div>
-        </div>
+  <div class="wrapper">
+    <!-- 提示层：z-index 已提高 -->
+    <div class="floating-hint" id="floatingHint"></div>
+
+    <div class="container">
+      <h1>乐队网盘</h1>
+      <div class="nav-buttons">
+        <button onclick="goToMainMenu()">返回主菜单</button>
+        <button onclick="goToPreviousMenu()">返回上一菜单</button>
+      </div>
+      <div class="breadcrumb" id="breadcrumb">全部文件 /</div>
+      <div class="file-manager" id="fileManager"></div>
     </div>
-    <script>
-        const fileSystem = {
-            "全部文件": {
-                "谱子": {
-                    "GBC全曲总谱.pdf": "https://drive.google.com/uc?export=view&id=1poSl_2jeOPkjR7pkrlVutWSFzmkk3Ol_",
-                    "春日影": {
-                        "春日影主音.gp": "Pan_Folder/谱子/春日影/春日影主音.gp",
-                        "春日影主音.pdf": "Pan_Folder/谱子/春日影/春日影主音.pdf"
-                    },
-                    "空之箱": {
-                        "空之箱节奏吉他.pdf": "Pan_Folder/谱子/空之箱/空之箱节奏吉他.pdf",
-                        "空之箱节奏吉他.gp": "Pan_Folder/谱子/空之箱/空之箱节奏吉他.gp"
-                    },
-                    "翻滚岩石": {
-                        "翻滚岩石节奏.gp": "Pan_Folder/谱子/翻滚岩石/翻滚岩石节奏.gp",
-                        "翻滚岩石节奏.pdf": "Pan_Folder/谱子/翻滚岩石/翻滚岩石节奏.pdf"
-                    },
-                    "太聪明":{
-                        "太聪明吉他.pdf": "Pan_Folder/谱子/太聪明/太聪明吉他.pdf",
-                        "太聪明贝斯.pdf": "Pan_Folder/谱子/太聪明/太聪明贝斯.pdf",
-                        "太聪明钢琴.pdf": "Pan_Folder/谱子/太聪明/太聪明钢琴.pdf",
-                        "太聪明鼓.pdf": "Pan_Folder/谱子/太聪明/太聪明鼓.pdf",
-                    },
-                    "梦中人/Dreams":{
-                        "梦中人节奏吉他无solo.pdf": "Pan_Folder/谱子/梦中人/梦中人节奏吉他无solo.pdf",
-                    },
-                    "Goodbye - toe":{
-                        "toe+-+Goodbye-Drumkit.pdf": "Pan_Folder/谱子/Goodbye - toe/toe+-+Goodbye-Drumkit.pdf",
-                        "toe+-+Goodbye-Electric_Bass.pdf": "Pan_Folder/谱子/Goodbye - toe/toe+-+Goodbye-Electric_Bass.pdf",
-                        "toe+-+Goodbye-G1.pdf": "Pan_Folder/谱子/Goodbye - toe/toe+-+Goodbye-G1.pdf",
-                        "toe+-+Goodbye-G2.pdf": "Pan_Folder/谱子/Goodbye - toe/toe+-+Goodbye-G2.pdf",
-                        "toe+-+Goodbye-Keyboard.pdf": "Pan_Folder/谱子/Goodbye - toe/toe+-+Goodbye-Keyboard.pdf",
-                        "toe+-+Goodbye-Vibraphone.pdf": "Pan_Folder/谱子/Goodbye - toe/toe+-+Goodbye-Vibraphone.pdf",
-                        "toe+-+Goodbye-Vocals.pdf": "Pan_Folder/谱子/Goodbye - toe/toe+-+Goodbye-Vocals.pdf",
-                    }
-                },
-                "音声":{
-                    "空之箱原速纯人声.wav": "Pan_Folder/音声/空之箱原速纯人声.wav"
-                },
-                "1月31日WashU学生会春晚节目选单.pdf": "Pan_Folder/1月31日WashU学生会春晚节目选单.pdf"
-            }
-        };
+  </div>
 
-        let currentPath = ["全部文件"];
+  <!-- 折叠式音乐播放器 -->
+  <div class="music-widget collapsed" id="musicWidget">
+    <!-- 顶部栏：折叠时只显示这一部分 -->
+    <div class="music-header" id="musicHeader">
+      <div class="music-title" id="musicTitle">当前歌曲：暂无</div>
+      <!-- 改成好看的箭头：▲(折叠) / ▼(展开) -->
+      <button class="music-toggle-btn" id="toggleBtn">▲</button>
+    </div>
+    <!-- 播放器主体，展开后可见 -->
+    <div class="music-body">
+      <div class="song-cover-wrapper">
+        <img id="song-cover" src="assets/images/zhuanji_Tupian.jpg" alt="歌曲封面" class="song-cover">
+      </div>
+      <p id="song-status" class="song-status">点击开始播放</p>
+      <div class="player-controls">
+        <button id="prev-button">⏮</button>
+        <button id="play-pause-button">▶</button>
+        <button id="next-button">⏭</button>
+      </div>
+      <div class="progress-container">
+        <span id="current-time">00:00</span>
+        <input type="range" id="progress-bar" class="progress-bar" value="0" min="0" max="100">
+        <span id="total-time">00:00</span>
+      </div>
+    </div>
+  </div>
 
-        function loadFiles(path) {
-            const fileManager = document.getElementById('fileManager');
-            fileManager.innerHTML = '';
-            let currentFolder = fileSystem;
-            for (const part of path) {
-                currentFolder = currentFolder[part];
-            }
-            for (const name in currentFolder) {
-                if (typeof currentFolder[name] === 'object') {
-                    const folderDiv = document.createElement('div');
-                    folderDiv.classList.add('item');
-                    folderDiv.innerHTML = `
-                        <img src="https://cdn-icons-png.flaticon.com/512/716/716784.png" alt="Folder Icon">
-                        <span>${name}</span>
-                    `;
-                    folderDiv.ondblclick = () => {
-                        currentPath.push(name);
-                        updateBreadcrumb();
-                        loadFiles(currentPath);
-                    };
-                    fileManager.appendChild(folderDiv);
-                } else {
-                    const fileDiv = document.createElement('div');
-                    fileDiv.classList.add('item');
-                    fileDiv.innerHTML = `
-                        <img src="${getFileIcon(name)}" alt="File Icon">
-                        <span><a href="${currentFolder[name]}" download>${name}</a></span>
-                    `;
-                    fileManager.appendChild(fileDiv);
-                }
-            }
-        }
+  <!-- audio 元素，通过切换 src 播放不同歌曲 -->
+  <audio id="audio-player"></audio>
 
-        function getFileIcon(filename) {
-            const lower = filename.toLowerCase();
-            if (lower.endsWith('.pdf')) {
-                return "https://cdn-icons-png.flaticon.com/512/337/337946.png";
-            } else if (lower.endsWith('.wav')) {
-                return "https://cdn-icons-png.flaticon.com/512/7412/7412943.png";
-            } else if (lower.endsWith('.gp')) {
-                return "https://cdn-icons-png.flaticon.com/512/16327/16327145.png";
-            } else {
-                return "https://cdn-icons-png.flaticon.com/512/607/607674.png";
-            }
-        }
+  <script>
+    /* =============== 文件系统数据 =============== */
+    const fileSystem = {
+      "全部文件": {
+        "谱子": {
+          "GBC全曲总谱.pdf": "https://drive.google.com/uc?export=view&id=1poSl_2jeOPkjR7pkrlVutWSFzmkk3Ol_",
+          "春日影": {
+            "春日影主音.gp": "Pan_Folder/谱子/春日影/春日影主音.gp",
+            "春日影主音.pdf": "Pan_Folder/谱子/春日影/春日影主音.pdf"
+          },
+          "空之箱": {
+            "空之箱节奏吉他.pdf": "Pan_Folder/谱子/空之箱/空之箱节奏吉他.pdf",
+            "空之箱节奏吉他.gp": "Pan_Folder/谱子/空之箱/空之箱节奏吉他.gp"
+          },
+          "翻滚岩石": {
+            "翻滚岩石节奏.gp": "Pan_Folder/谱子/翻滚岩石/翻滚岩石节奏.gp",
+            "翻滚岩石节奏.pdf": "Pan_Folder/谱子/翻滚岩石/翻滚岩石节奏.pdf"
+          },
+          "太聪明": {
+            "太聪明吉他.pdf": "Pan_Folder/谱子/太聪明/太聪明吉他.pdf",
+            "太聪明贝斯.pdf": "Pan_Folder/谱子/太聪明/太聪明贝斯.pdf",
+            "太聪明钢琴.pdf": "Pan_Folder/谱子/太聪明/太聪明钢琴.pdf",
+            "太聪明鼓.pdf": "Pan_Folder/谱子/太聪明/太聪明鼓.pdf"
+          },
+          "梦中人/Dreams": {
+            "梦中人节奏吉他无solo.pdf": "Pan_Folder/谱子/梦中人/梦中人节奏吉他无solo.pdf"
+          },
+          "Goodbye - toe": {
+            "toe+-+Goodbye-Drumkit.pdf": "Pan_Folder/谱子/Goodbye - toe/toe+-+Goodbye-Drumkit.pdf",
+            "toe+-+Goodbye-Electric_Bass.pdf": "Pan_Folder/谱子/Goodbye - toe/toe+-+Goodbye-Electric_Bass.pdf",
+            "toe+-+Goodbye-G1.pdf": "Pan_Folder/谱子/Goodbye - toe/toe+-+Goodbye-G1.pdf",
+            "toe+-+Goodbye-G2.pdf": "Pan_Folder/谱子/Goodbye - toe/toe+-+Goodbye-G2.pdf",
+            "toe+-+Goodbye-Keyboard.pdf": "Pan_Folder/谱子/Goodbye - toe/toe+-+Goodbye-Keyboard.pdf",
+            "toe+-+Goodbye-Vibraphone.pdf": "Pan_Folder/谱子/Goodbye - toe/toe+-+Goodbye-Vibraphone.pdf",
+            "toe+-+Goodbye-Vocals.pdf": "Pan_Folder/谱子/Goodbye - toe/toe+-+Goodbye-Vocals.pdf"
+          }
+        },
+        "音声": {
+          "空之箱原速纯人声.wav": "Pan_Folder/音声/空之箱原速纯人声.wav"
+        },
+        "1月31日WashU学生会春晚节目选单.pdf": "Pan_Folder/1月31日WashU学生会春晚节目选单.pdf"
+      }
+    };
 
-        function updateBreadcrumb() {
-            const breadcrumb = document.getElementById('breadcrumb');
-            breadcrumb.innerHTML = '';
-            currentPath.forEach((part, index) => {
-                const span = document.createElement('span');
-                span.textContent = part;
-                span.onclick = () => {
-                    currentPath = currentPath.slice(0, index + 1);
-                    updateBreadcrumb();
-                    loadFiles(currentPath);
-                };
-                breadcrumb.appendChild(span);
-                if (index < currentPath.length - 1) {
-                    breadcrumb.innerHTML += ' / ';
-                }
-            });
-        }
+    let currentPath = ["全部文件"];
 
-        function goToMainMenu() {
-            currentPath = ["全部文件"];
+    function loadFiles(path) {
+      const fileManager = document.getElementById('fileManager');
+      fileManager.innerHTML = '';
+      let currentFolder = fileSystem;
+      for (const part of path) {
+        currentFolder = currentFolder[part];
+      }
+      for (const name in currentFolder) {
+        if (typeof currentFolder[name] === 'object') {
+          const folderDiv = document.createElement('div');
+          folderDiv.classList.add('item');
+          folderDiv.innerHTML = `
+            <img src="https://cdn-icons-png.flaticon.com/512/716/716784.png" alt="Folder Icon">
+            <span>${name}</span>
+          `;
+          folderDiv.ondblclick = () => {
+            currentPath.push(name);
             updateBreadcrumb();
             loadFiles(currentPath);
+          };
+          fileManager.appendChild(folderDiv);
+        } else {
+          const fileDiv = document.createElement('div');
+          fileDiv.classList.add('item');
+          fileDiv.innerHTML = `
+            <img src="${getFileIcon(name)}" alt="File Icon">
+            <span><a href="${currentFolder[name]}" download>${name}</a></span>
+          `;
+          fileManager.appendChild(fileDiv);
         }
+      }
+    }
 
-        function goToPreviousMenu() {
-            if (currentPath.length > 1) {
-                currentPath.pop();
-                updateBreadcrumb();
-                loadFiles(currentPath);
-            }
+    function getFileIcon(filename) {
+      const lower = filename.toLowerCase();
+      if (lower.endsWith('.pdf')) {
+        return "https://cdn-icons-png.flaticon.com/512/337/337946.png";
+      } else if (lower.endsWith('.wav')) {
+        return "https://cdn-icons-png.flaticon.com/512/7412/7412943.png";
+      } else if (lower.endsWith('.gp')) {
+        return "https://cdn-icons-png.flaticon.com/512/16327/16327145.png";
+      } else {
+        return "https://cdn-icons-png.flaticon.com/512/607/607674.png";
+      }
+    }
+
+    function updateBreadcrumb() {
+      const breadcrumb = document.getElementById('breadcrumb');
+      breadcrumb.innerHTML = '';
+      currentPath.forEach((part, index) => {
+        const span = document.createElement('span');
+        span.textContent = part;
+        span.onclick = () => {
+          currentPath = currentPath.slice(0, index + 1);
+          updateBreadcrumb();
+          loadFiles(currentPath);
+        };
+        breadcrumb.appendChild(span);
+        if (index < currentPath.length - 1) {
+          breadcrumb.innerHTML += ' / ';
         }
+      });
+    }
 
+    function goToMainMenu() {
+      currentPath = ["全部文件"];
+      updateBreadcrumb();
+      loadFiles(currentPath);
+    }
+
+    function goToPreviousMenu() {
+      if (currentPath.length > 1) {
+        currentPath.pop();
         updateBreadcrumb();
         loadFiles(currentPath);
+      }
+    }
 
-        function createSnow() {
-            const snowflake = document.createElement('div');
-            snowflake.classList.add('snowflake');
-            snowflake.style.left = Math.random() * 100 + 'vw';
-            snowflake.style.opacity = Math.random() * 0.8 + 0.2;
-            snowflake.style.fontSize = Math.random() * 20 + 10 + 'px';
-            snowflake.style.animationDuration = Math.random() * 3 + 3 + 's';
-            snowflake.innerHTML = '🌸';
-            document.body.appendChild(snowflake);
-            setTimeout(() => {
-                snowflake.remove();
-            }, 6000);
+    // 初始化
+    updateBreadcrumb();
+    loadFiles(currentPath);
+
+    /* =============== 雪花特效 =============== */
+    function createSnow() {
+      const snowflake = document.createElement('div');
+      snowflake.classList.add('snowflake');
+      snowflake.innerHTML = '🌸';
+      snowflake.style.left = Math.random() * 100 + 'vw';
+      snowflake.style.opacity = Math.random() * 0.8 + 0.2;
+      snowflake.style.fontSize = Math.random() * 20 + 10 + 'px';
+      snowflake.style.animationDuration = Math.random() * 3 + 3 + 's';
+      document.body.appendChild(snowflake);
+      setTimeout(() => {
+        snowflake.remove();
+      }, 6000);
+    }
+    setInterval(createSnow, 200);
+
+    /* =============== 漂浮提示 =============== */
+    function createFloatingHint() {
+      const hint = document.getElementById('floatingHint');
+      hint.textContent = '进入文件夹请双击';
+      hint.onclick = () => hint.remove();
+      setTimeout(() => {
+        if (document.body.contains(hint)) {
+          hint.remove();
         }
-        setInterval(createSnow, 200);
+      }, 9000);
+    }
+    window.onload = createFloatingHint;
 
-        const style = document.createElement('style');
-        style.innerHTML = `
-            .snowflake {
-                position: fixed;
-                top: -10px;
-                color: #ffffff;
-                pointer-events: none;
-                animation: fall linear forwards;
-            }
-            @keyframes fall {
-                to {
-                    transform: translateY(100vh);
-                    opacity: 0;
-                }
-            }
-            @media screen and (max-width: 768px) {
-                .snowflake {
-                    font-size: 8px;
-                    animation-duration: 4s;
-                }
-            }
-        `;
-        document.head.appendChild(style);
+    /* =============== 页面标题隐藏/可见切换 =============== */
+    let originalTitle = document.title;
+    let titleTimer;
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) {
+        document.title = "不要离开我～😭";
+        titleTimer = setInterval(() => {
+          document.title =
+            document.title === "不要离开我～😭" ? "快回来！🥺" : "不要离开我～😭";
+        }, 1000);
+      } else {
+        clearInterval(titleTimer);
+        document.title = "欢迎回来！🎉";
+        setTimeout(() => {
+          document.title = originalTitle;
+        }, 1000);
+      }
+    });
 
-        function createFloatingHint() {
-            const hint = document.getElementById('floatingHint');
-            hint.textContent = '进入文件夹请双击';
-            hint.onclick = () => hint.remove();
-            setTimeout(() => {
-                if (document.body.contains(hint)) {
-                    hint.remove();
-                }
-            }, 9000);
-        }
-        window.onload = createFloatingHint;
-    </script>
+    /* =============== 折叠式音乐播放器功能 =============== */
+    const playlist = [
+      { title: "翻滚岩石", src: "music/翻滚岩石.mp3", cover: "zhuanji/翻滚岩石.png" },
+      { title: "春日影",   src: "music/春日影.mp3",   cover: "zhuanji/春日影.jpg" },
+      { title: "太聪明",   src: "music/大聪明.mp3",   cover: "zhuanji/大聪明.png" },
+      { title: "梦中人",   src: "music/梦中人.mp3",   cover: "zhuanji/梦中人.png" },
+      { title: "空之箱",   src: "music/空之箱.mp3",   cover: "zhuanji/空之箱.png" },
+      { title: "Goodbye - toe", src: "music/goodbye.mp3", cover: "zhuanji/goodbye.png" },
+      { title: "熙熙攘攘，我们的城市", src: "music/熙熙攘攘.mp3", cover: "zhuanji/熙熙攘攘.png"}
+    ];
+
+    let currentIndex = 0;
+    const audioPlayer    = document.getElementById('audio-player');
+    const musicWidget    = document.getElementById('musicWidget');
+    const musicHeader    = document.getElementById('musicHeader');
+    const musicTitle     = document.getElementById('musicTitle');
+    const toggleBtn      = document.getElementById('toggleBtn');
+    const songStatus     = document.getElementById('song-status');
+    const songCover      = document.getElementById('song-cover');
+    const playPauseBtn   = document.getElementById('play-pause-button');
+    const prevBtn        = document.getElementById('prev-button');
+    const nextBtn        = document.getElementById('next-button');
+    const progressBar    = document.getElementById('progress-bar');
+    const currentTimeLabel = document.getElementById('current-time');
+    const totalTimeLabel   = document.getElementById('total-time');
+
+    // 默认音量
+    audioPlayer.volume = 0.3;
+    // 加载首曲
+    loadTrack(currentIndex);
+
+    // 折叠/展开切换
+    toggleBtn.addEventListener('click', () => {
+      if (musicWidget.classList.contains('collapsed')) {
+        musicWidget.classList.remove('collapsed');
+        musicWidget.classList.add('expanded');
+        toggleBtn.textContent = '▼'; // 展开时用“下箭头”
+      } else {
+        musicWidget.classList.remove('expanded');
+        musicWidget.classList.add('collapsed');
+        toggleBtn.textContent = '▲'; // 折叠时用“上箭头”
+      }
+    });
+
+    // 点击顶部栏空白处也可触发展开
+    musicHeader.addEventListener('click', (e) => {
+      if (e.target.id !== 'toggleBtn') {
+        toggleBtn.click();
+      }
+    });
+
+    // 加载当前索引歌曲
+    function loadTrack(index) {
+      const track = playlist[index];
+      audioPlayer.src = track.src;
+      songCover.src = track.cover;
+      songStatus.textContent = `准备播放《${track.title}》`;
+      musicTitle.textContent  = `当前歌曲：${track.title}`;
+      progressBar.value = 0;
+      currentTimeLabel.textContent = "00:00";
+      totalTimeLabel.textContent   = "00:00";
+    }
+
+    audioPlayer.addEventListener('loadedmetadata', () => {
+      totalTimeLabel.textContent = formatTime(audioPlayer.duration);
+    });
+
+    // 播放/暂停
+    playPauseBtn.addEventListener('click', () => {
+      if (audioPlayer.paused) {
+        audioPlayer.play();
+        songStatus.textContent = `正在播放《${playlist[currentIndex].title}》`;
+        playPauseBtn.innerHTML = "⏸";
+      } else {
+        audioPlayer.pause();
+        songStatus.textContent = `已暂停《${playlist[currentIndex].title}》`;
+        playPauseBtn.innerHTML = "▶";
+      }
+    });
+
+    // 上一首
+    prevBtn.addEventListener('click', () => {
+      currentIndex--;
+      if (currentIndex < 0) currentIndex = playlist.length - 1;
+      loadTrack(currentIndex);
+      audioPlayer.play();
+      songStatus.textContent = `正在播放《${playlist[currentIndex].title}》`;
+      playPauseBtn.innerHTML = "⏸";
+    });
+
+    // 下一首
+    nextBtn.addEventListener('click', () => {
+      currentIndex++;
+      if (currentIndex >= playlist.length) currentIndex = 0;
+      loadTrack(currentIndex);
+      audioPlayer.play();
+      songStatus.textContent = `正在播放《${playlist[currentIndex].title}》`;
+      playPauseBtn.innerHTML = "⏸";
+    });
+
+    // 播放进度
+    audioPlayer.addEventListener('timeupdate', () => {
+      if (!audioPlayer.paused) {
+        const progress = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+        progressBar.value = progress || 0;
+        currentTimeLabel.textContent = formatTime(audioPlayer.currentTime);
+      }
+    });
+
+    // 拖动进度条
+    progressBar.addEventListener('input', () => {
+      const seekTime = (progressBar.value / 100) * audioPlayer.duration;
+      audioPlayer.currentTime = seekTime;
+    });
+
+    // 自动播放下一首
+    audioPlayer.addEventListener('ended', () => {
+      // 先切到下一首
+      currentIndex++;
+      if (currentIndex >= playlist.length) currentIndex = 0;
+      loadTrack(currentIndex);
+      audioPlayer.play();
+      songStatus.textContent = `正在播放《${playlist[currentIndex].title}》`;
+      playPauseBtn.innerHTML = "⏸";
+    });
+
+    // 时间格式化
+    function formatTime(seconds) {
+      if (isNaN(seconds)) return "00:00";
+      const m = Math.floor(seconds / 60);
+      const s = Math.floor(seconds % 60);
+      return `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
+    }
+  </script>
 </body>
 </html>
