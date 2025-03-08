@@ -6,37 +6,225 @@
     <title>乐队网盘</title>
     <link rel="icon" type="image/png" href="assets/images/cloud_drive.png">
     <style>
-        /* 页面基础样式 */
-    body {
-        margin: 0;
-        padding: 20px;
-        font-family: Arial, sans-serif;
-        background: linear-gradient(135deg, #e0f7fa, #ffe0e9); 
-        color: #333;
-        overflow-x: hidden; /* 防止页面横向滚动 */
-    }
+/* 让 html、body 充满屏幕 */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
 
-    /* 提示文字样式 */
-    .hint {
-        font-size: 12px;
-        color: #666;
-        text-align: center;
-        margin-top: -10px;
-        margin-bottom: 20px;
-        opacity: 0.8;
-        transition: opacity 0.3s ease;
+/* 背景在 body 上实现，去掉原有 body padding */
+body {
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(135deg, #e0f7fa, #ffe0e9);
+    color: #333;
+    overflow-x: hidden;
+}
+
+/* 用 wrapper 占满可视区，内边距用来控制整体留白 */
+.wrapper {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 20px;
+    box-sizing: border-box;
+    position: relative;
+}
+
+/* 浮动提示 */
+.floating-hint {
+    position: absolute;
+    top: 35%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: auto;
+    max-width: 320px;
+    background-color: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    color: #333;
+    padding: 12px 20px;
+    border-radius: 20px;
+    font-size: 14px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    animation: fadeIn 1s forwards, fadeOut 5s 4s forwards;
+    cursor: pointer;
+}
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -60%);
     }
-    .hint:hover {
+    to {
         opacity: 1;
+        transform: translate(-50%, -50%);
     }
+}
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+        transform: translate(-50%, -40%);
+    }
+}
 
-    /* 居中漂浮气泡提示样式 */
+/* 容器本身半透明 + 毛玻璃 */
+.container {
+    max-width: 80%;
+    width: 100%;
+    margin: 70px auto 0 auto;
+    padding: 30px;
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+}
+
+h1 {
+    text-align: center;
+    color: #d81b60;
+    margin-bottom: 20px;
+}
+
+.hint {
+    font-size: 12px;
+    color: #666;
+    text-align: center;
+    margin-top: -10px;
+    margin-bottom: 20px;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+.hint:hover {
+    opacity: 1;
+}
+
+.breadcrumb {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 20px;
+}
+.breadcrumb span {
+    cursor: pointer;
+    color: #64b5f6;
+    margin-right: 8px;
+}
+.breadcrumb span:hover {
+    text-decoration: underline;
+}
+
+.file-manager {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 24px;
+}
+
+.item {
+    position: relative; 
+    overflow: hidden; 
+    background-color: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(8px);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transform-style: preserve-3d;
+    perspective: 2000px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.item img {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 12px;
+}
+.item span {
+    display: block;
+    font-size: 14px;
+    color: #555;
+    word-break: break-word;
+}
+.item:hover {
+    transform: perspective(1000px) rotateX(5deg) rotateY(5deg) translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+.item::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    transition: width 0.6s ease, height 0.6s ease, opacity 0.6s ease;
+    opacity: 0;
+}
+.item:hover::before {
+    width: 200%;
+    height: 200%;
+    opacity: 1;
+}
+.item a {
+    text-decoration: none;
+    color: #64b5f6;
+}
+.item a:hover {
+    text-decoration: underline;
+}
+
+.nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+.nav-buttons button {
+    background-color: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(8px);
+    color: #333;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+.nav-buttons button:hover {
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+@media screen and (max-width: 768px) {
+    .wrapper {
+        padding: 20px;
+    }
+    .container {
+        max-width: 100%;
+        margin: 30px auto 0 auto;
+        padding: 20px;
+    }
+    .file-manager {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .item {
+        padding: 12px;
+    }
+    .item img {
+        width: 48px;
+        height: 48px;
+        margin-bottom: 8px;
+    }
+    .item span {
+        font-size: 12px;
+    }
     .floating-hint {
-        position: absolute;
-        top: 35%;
+        top: 30%;
         left: 50%;
         transform: translate(-50%, -50%);
-        width: auto;
         max-width: 320px;
         background-color: rgba(255, 255, 255, 0.7);
         backdrop-filter: blur(10px);
@@ -50,220 +238,23 @@
         animation: fadeIn 1s forwards, fadeOut 5s 4s forwards;
         cursor: pointer;
     }
-
-    /* 气泡动画效果 */
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translate(-50%, -60%);
-        }
-        to {
-            opacity: 1;
-            transform: translate(-50%, -50%);
-        }
-    }
-    @keyframes fadeOut {
-        to {
-            opacity: 0;
-            transform: translate(-50%, -40%);
-        }
-    }
-
-    /* 容器样式 */
-    .container {
-        max-width: 80%;
-        margin: 70px auto 0 auto;
-        padding: 30px;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-
-        /* 使用半透明白 + blur，让背景渐变透过 */
-        background-color: rgba(255, 255, 255, 0.4);
-        backdrop-filter: blur(10px);
-
-        box-sizing: border-box;
-    }
-
-    /* 标题样式 */
-    h1 {
-        text-align: center;
-        color: #d81b60; /* 淡粉色 */
-        margin-bottom: 20px;
-    }
-
-    /* 路径导航栏样式 */
-    .breadcrumb {
-        font-size: 14px;
-        color: #666;
-        margin-bottom: 20px;
-    }
-    .breadcrumb span {
-        cursor: pointer;
-        color: #64b5f6; /* 淡蓝色 */
-        margin-right: 8px;
-    }
-    .breadcrumb span:hover {
-        text-decoration: underline;
-    }
-
-    /* 文件管理器布局优化 */
-    .file-manager {
-        display: grid;
-        grid-template-columns: repeat(6, 1fr);
-        gap: 24px;
-    }
-
-    /* 文件和文件夹卡片样式 */
-    .item {
-        position: relative; 
-        overflow: hidden; /* 为了做波纹效果不会溢出 */
-        
-        background-color: rgba(255, 255, 255, 0.6);
-        backdrop-filter: blur(8px);
-        border-radius: 12px;
-        padding: 16px;
-        text-align: center;
-        
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        cursor: pointer;
-        
-        /* 3D 相关 + 过渡 */
-        transform-style: preserve-3d;
-        perspective: 2000px;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .item img {
-        width: 64px;
-        height: 64px;
-        margin-bottom: 12px;
-    }
-
-    .item span {
-        display: block;
-        font-size: 14px;
-        color: #555;
-        word-break: break-word;
-    }
-
-    /* 3D hover + 波纹效果 */
-    .item:hover {
-        transform: perspective(1000px) rotateX(5deg) rotateY(5deg) translateY(-2px);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-    }
-
-    /* 波纹伪元素 */
-    .item::before {
-        content: "";
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 0;
-        height: 0;
-        background-color: rgba(255, 255, 255, 0.3);
-        border-radius: 50%;
-        transform: translate(-50%, -50%);
-        pointer-events: none;
-        transition: width 0.6s ease, height 0.6s ease, opacity 0.6s ease;
-        opacity: 0;
-    }
-
-    .item:hover::before {
-        width: 200%;
-        height: 200%;
-        opacity: 1;
-    }
-
-    /* 链接样式 */
-    .item a {
-        text-decoration: none;
-        color: #64b5f6;
-    }
-    .item a:hover {
-        text-decoration: underline;
-    }
-
-    /* 导航按钮样式 */
-    .nav-buttons {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 20px;
-    }
-    .nav-buttons button {
-        background-color: rgba(255, 255, 255, 0.7);
-        backdrop-filter: blur(8px);
-        color: #333;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 14px;
-        transition: background-color 0.3s ease;
-    }
-    .nav-buttons button:hover {
-        background-color: rgba(255, 255, 255, 0.9);
-    }
-
-    /* 移动端适配 */
-    @media screen and (max-width: 768px) {
-        .container {
-            max-width: 100%;
-            padding: 20px;
-        }
-        .file-manager {
-            grid-template-columns: repeat(2, 1fr);
-        }
-        .item {
-            padding: 12px;
-        }
-        .item img {
-            width: 48px;
-            height: 48px;
-            margin-bottom: 8px;
-        }
-        .item span {
-            font-size: 12px;
-        }
-        .floating-hint {
-            top: 30%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            max-width: 320px;
-            background-color: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(10px);
-            color: #333;
-            padding: 12px 20px;
-            border-radius: 20px;
-            font-size: 14px;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            opacity: 0;
-            animation: fadeIn 1s forwards, fadeOut 5s 4s forwards;
-            cursor: pointer;
-        }
-    }
-
+}
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>乐队网盘</h1>
+    <div class="wrapper">
         <div class="floating-hint" id="floatingHint"></div>
-        <!-- 导航按钮 -->
-        <div class="nav-buttons">
-            <button onclick="goToMainMenu()">返回主菜单</button>
-            <button onclick="goToPreviousMenu()">返回上一菜单</button>
+        <div class="container">
+            <h1>乐队网盘</h1>
+            <div class="nav-buttons">
+                <button onclick="goToMainMenu()">返回主菜单</button>
+                <button onclick="goToPreviousMenu()">返回上一菜单</button>
+            </div>
+            <div class="breadcrumb" id="breadcrumb">全部文件 /</div>
+            <div class="file-manager" id="fileManager"></div>
         </div>
-        <!-- 路径导航栏 -->
-        <div class="breadcrumb" id="breadcrumb">全部文件 /</div>
-
-
-        <!-- 文件管理器 -->
-        <div class="file-manager" id="fileManager"></div>
     </div>
-
     <script>
-        // 文件系统的实际数据
         const fileSystem = {
             "全部文件": {
                 "谱子": {
@@ -297,30 +288,26 @@
                         "toe+-+Goodbye-Keyboard.pdf": "Pan_Folder/谱子/Goodbye - toe/toe+-+Goodbye-Keyboard.pdf",
                         "toe+-+Goodbye-Vibraphone.pdf": "Pan_Folder/谱子/Goodbye - toe/toe+-+Goodbye-Vibraphone.pdf",
                         "toe+-+Goodbye-Vocals.pdf": "Pan_Folder/谱子/Goodbye - toe/toe+-+Goodbye-Vocals.pdf",
-                    },
+                    }
                 },
                 "音声":{
-                    "空之箱原速纯人声.wav": "Pan_Folder/音声/空之箱原速纯人声.wav",
+                    "空之箱原速纯人声.wav": "Pan_Folder/音声/空之箱原速纯人声.wav"
                 },
-                "1月31日WashU学生会春晚节目选单.pdf": "Pan_Folder/1月31日WashU学生会春晚节目选单.pdf",
+                "1月31日WashU学生会春晚节目选单.pdf": "Pan_Folder/1月31日WashU学生会春晚节目选单.pdf"
             }
         };
 
         let currentPath = ["全部文件"];
 
-        // 初始化文件管理器
         function loadFiles(path) {
             const fileManager = document.getElementById('fileManager');
             fileManager.innerHTML = '';
-
             let currentFolder = fileSystem;
             for (const part of path) {
                 currentFolder = currentFolder[part];
             }
-
             for (const name in currentFolder) {
                 if (typeof currentFolder[name] === 'object') {
-                    // 文件夹
                     const folderDiv = document.createElement('div');
                     folderDiv.classList.add('item');
                     folderDiv.innerHTML = `
@@ -334,7 +321,6 @@
                     };
                     fileManager.appendChild(folderDiv);
                 } else {
-                    // 文件，使用 getFileIcon() 获取图标
                     const fileDiv = document.createElement('div');
                     fileDiv.classList.add('item');
                     fileDiv.innerHTML = `
@@ -346,26 +332,19 @@
             }
         }
 
-        // 新增辅助函数，根据文件扩展名返回相应图标的 URL
         function getFileIcon(filename) {
             const lower = filename.toLowerCase();
             if (lower.endsWith('.pdf')) {
-                // PDF 图标
                 return "https://cdn-icons-png.flaticon.com/512/337/337946.png";
             } else if (lower.endsWith('.wav')) {
-                // WAV 图标（请确保链接有效）
                 return "https://cdn-icons-png.flaticon.com/512/7412/7412943.png";
             } else if (lower.endsWith('.gp')) {
-                // GP 文件：如果没有专用图标，则使用默认的文档图标（非 PDF）
                 return "https://cdn-icons-png.flaticon.com/512/16327/16327145.png";
             } else {
-                // 其他文件类型的默认图标（可以根据需要更换）
                 return "https://cdn-icons-png.flaticon.com/512/607/607674.png";
             }
         }
 
-
-        // 更新路径导航栏
         function updateBreadcrumb() {
             const breadcrumb = document.getElementById('breadcrumb');
             breadcrumb.innerHTML = '';
@@ -384,14 +363,12 @@
             });
         }
 
-        // 返回主菜单
         function goToMainMenu() {
             currentPath = ["全部文件"];
             updateBreadcrumb();
             loadFiles(currentPath);
         }
 
-        // 返回上一菜单
         function goToPreviousMenu() {
             if (currentPath.length > 1) {
                 currentPath.pop();
@@ -400,35 +377,24 @@
             }
         }
 
-        // 初始化
         updateBreadcrumb();
         loadFiles(currentPath);
 
-
-        // 创建雪花特效
-function createSnow() {
-    const snowflake = document.createElement('div');
-    snowflake.classList.add('snowflake');
-
-    // 随机位置和大小
-    snowflake.style.left = Math.random() * 100 + 'vw';
-    snowflake.style.opacity = Math.random() * 0.8 + 0.2;
-    snowflake.style.fontSize = Math.random() * 20 + 10 + 'px';
-    snowflake.style.animationDuration = Math.random() * 3 + 3 + 's';
-
-    snowflake.innerHTML = '🌸';
-    document.body.appendChild(snowflake);
-
-    // 雪花在 6 秒后自动删除
-    setTimeout(() => {
-        snowflake.remove();
-    }, 6000);
-}
-
-        // 每隔 200 毫秒创建一个雪花
+        function createSnow() {
+            const snowflake = document.createElement('div');
+            snowflake.classList.add('snowflake');
+            snowflake.style.left = Math.random() * 100 + 'vw';
+            snowflake.style.opacity = Math.random() * 0.8 + 0.2;
+            snowflake.style.fontSize = Math.random() * 20 + 10 + 'px';
+            snowflake.style.animationDuration = Math.random() * 3 + 3 + 's';
+            snowflake.innerHTML = '🌸';
+            document.body.appendChild(snowflake);
+            setTimeout(() => {
+                snowflake.remove();
+            }, 6000);
+        }
         setInterval(createSnow, 200);
 
-        // 添加雪花样式
         const style = document.createElement('style');
         style.innerHTML = `
             .snowflake {
@@ -438,15 +404,12 @@ function createSnow() {
                 pointer-events: none;
                 animation: fall linear forwards;
             }
-
             @keyframes fall {
                 to {
                     transform: translateY(100vh);
                     opacity: 0;
                 }
             }
-
-            /* 调整移动端的雪花效果 */
             @media screen and (max-width: 768px) {
                 .snowflake {
                     font-size: 8px;
@@ -456,26 +419,17 @@ function createSnow() {
         `;
         document.head.appendChild(style);
 
-
-                // 创建漂浮气泡提示
-        // 创建漂浮气泡提示
         function createFloatingHint() {
             const hint = document.getElementById('floatingHint');
             hint.textContent = '进入文件夹请双击';
-            hint.onclick = () => hint.remove(); // 点击时移除气泡提示
-
-            // 5秒后自动删除提示
+            hint.onclick = () => hint.remove();
             setTimeout(() => {
                 if (document.body.contains(hint)) {
                     hint.remove();
                 }
             }, 9000);
         }
-
-        // 页面加载时创建提示气泡
         window.onload = createFloatingHint;
-
-
     </script>
 </body>
 </html>
