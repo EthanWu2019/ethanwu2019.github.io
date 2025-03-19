@@ -6,6 +6,11 @@
   <title>乐队网盘</title>
   <link rel="icon" type="image/png" href="cursor/pa.gif">
   <style>
+    /* 
+      =========================
+      1. 全局 & 鼠标指针设置
+      =========================
+    */
     /* 隐藏默认鼠标指针，所有交互元素统一禁止显示系统指针 */
     body, button, a, .floating-hint, .music-header, .music-toggle-btn, .player-controls button, .progress-bar {
       cursor: none !important;
@@ -21,21 +26,55 @@
       z-index: 1000000;
       transform: translate(-50%, -50%);
     }
-    /* 让 html、body 充满屏幕 */
+
+    /* 
+      =========================
+      2. 主题相关：日间/夜间
+      =========================
+    */
+    :root {
+      /* 日间主题 - 浅色粉蓝 */
+      --bg-gradient: linear-gradient(135deg, #e0f7fa, #ffe0e9);
+      --text-color: #333;
+      --title-color: #d81b60;
+      --container-bg: rgba(255, 255, 255, 0.4);
+      --card-bg: rgba(255, 255, 255, 0.6);
+      --loader-bg: linear-gradient(135deg, rgba(224,247,250,0.95), rgba(255,224,233,0.95));
+      --link-color: #64b5f6;
+      --card-text: #555;
+    }
+    /* 切换到夜间主题时的深色粉蓝 */
+    .dark-theme {
+      --bg-gradient: linear-gradient(135deg, #1b2a3c, #3f2b4d); /* 深色粉蓝渐变 */
+      --text-color: #ddd;
+      --title-color: #ff99cc;
+      --container-bg: rgba(30, 30, 40, 0.4);
+      --card-bg: rgba(40, 40, 50, 0.6);
+      --loader-bg: linear-gradient(135deg, rgba(27,42,60,0.95), rgba(63,43,77,0.95));
+      --link-color: #8fc3ff;
+      --card-text: #bbb;
+    }
+
+    /*
+      =========================
+      3. 页面整体样式
+      =========================
+    */
     html, body {
       margin: 0;
       padding: 0;
       height: 100%;
     }
-    /* 背景在 body 上实现 */
+    /* 背景 */
     body {
       display: flex;
       flex-direction: column;
-      background: linear-gradient(135deg, #e0f7fa, #ffe0e9);
-      color: #333;
+      background: var(--bg-gradient);
+      color: var(--text-color);
       overflow-x: hidden;
+      transition: background 0.5s ease; /* 主题切换过渡 */
     }
-    /* 用 wrapper 占满可视区 */
+    /* 容器 wrapper */
     .wrapper {
       flex: 1;
       display: flex;
@@ -45,59 +84,117 @@
       box-sizing: border-box;
       position: relative;
     }
-    /* 容器本身半透明 + 毛玻璃 */
+    /* 容器 container */
     .container {
       max-width: 80%;
       width: 100%;
       margin: 70px auto 0 auto;
       padding: 30px;
       border-radius: 12px;
-      background-color: rgba(255, 255, 255, 0.4);
+      background-color: var(--container-bg);
       backdrop-filter: blur(10px);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       box-sizing: border-box;
       position: relative;
       z-index: 1;
+      transition: background-color 0.5s ease;
     }
+    /* 标题 - 点击后切换主题 */
     h1 {
       text-align: center;
-      color: #d81b60;
+      color: var(--title-color);
       margin-bottom: 20px;
+      transition: color 0.5s ease;
+      cursor: none;
     }
+    h1:hover {
+        text-decoration: none;
+        transform: scale(1.05);
+        transition: transform 0.4s ease;
+      }
+      
+
+    /*
+      =========================
+      4. 加载动画遮罩层
+      =========================
+    */
+    #loaderOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--loader-bg); /* 跟随主题变化 */
+      backdrop-filter: blur(10px);
+      z-index: 100000;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: background 0.5s ease; /* 切换主题时也可平滑过渡 */
+    }
+    /* loader-note 动画 */
+    .loader-note {
+      position: absolute;
+      width: 100px;
+      height: auto;
+      opacity: 1;
+      left: 80%;
+      top: 15%;
+      animation: moveNote 2s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+    }
+    @keyframes moveNote {
+      0% {
+        left: 80%;
+        top: 15%;
+        transform: translate(-50%, -50%) scale(1);
+      }
+      50% {
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%) scale(1.2);
+      }
+      100% {
+        left: 20%;
+        top: 85%;
+        transform: translate(-50%, -50%) scale(1);
+      }
+    }
+
+    /*
+      =========================
+      5. 其它元素：提示文字、面包屑、文件卡片等
+      =========================
+    */
     .hint {
       font-size: 12px;
-      color: #666;
+      color: var(--text-color);
       text-align: center;
       margin-top: -10px;
       margin-bottom: 20px;
       opacity: 0.8;
       transition: opacity 0.3s ease;
     }
-    .hint:hover {
-      opacity: 1;
-    }
     .breadcrumb {
       font-size: 14px;
-      color: #666;
+      color: var(--text-color);
       margin-bottom: 20px;
+      transition: color 0.5s ease;
     }
     .breadcrumb span {
-      cursor: none;
-      color: #64b5f6;
-      margin-right: 8px;
-    }
-    .breadcrumb span:hover {
-      text-decoration: underline;
+      color: var(--link-color);
     }
     .file-manager {
       display: grid;
       grid-template-columns: repeat(6, 1fr);
       gap: 24px;
     }
+    /* 文件/文件夹卡片 */
     .item {
-      position: relative; 
-      overflow: hidden; 
-      background-color: rgba(255, 255, 255, 0.6);
+      position: relative;
+      overflow: hidden;
+      background-color: var(--card-bg);
       backdrop-filter: blur(8px);
       border-radius: 12px;
       padding: 16px;
@@ -106,7 +203,7 @@
       cursor: none;
       transform-style: preserve-3d;
       perspective: 2000px;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.5s ease;
     }
     .item img {
       width: 64px;
@@ -116,8 +213,9 @@
     .item span {
       display: block;
       font-size: 14px;
-      color: #555;
+      color: var(--card-text);
       word-break: break-word;
+      transition: color 0.5s ease;
     }
     .item:hover {
       transform: perspective(1000px) rotateX(5deg) rotateY(5deg) translateY(-2px);
@@ -144,12 +242,18 @@
     }
     .item a {
       text-decoration: none;
-      color: #64b5f6;
+      color: var(--link-color);
       cursor: none;
     }
     .item a:hover {
       text-decoration: underline;
     }
+
+    /*
+      =========================
+      6. 导航按钮
+      =========================
+    */
     .nav-buttons {
       display: flex;
       justify-content: space-between;
@@ -172,10 +276,12 @@
       box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
       transform: translateY(-2px);
     }
-    .nav-buttons button:active {
-      transform: scale(0.95);
-      box-shadow: 0 3px 7px rgba(0, 0, 0, 0.2);
-    }
+
+    /*
+      =========================
+      7. 提示层
+      =========================
+    */
     .floating-hint {
       position: absolute;
       top: 35%;
@@ -212,26 +318,32 @@
         transform: translate(-50%, -40%);
       }
     }
+
+    /*
+      =========================
+      8. 音乐播放器
+      =========================
+    */
     .music-widget {
       position: fixed;
       bottom: 20px;
       right: 20px;
       width: 280px;
-      background: rgba(255, 255, 255, 0.3);
+      background: var(--card-bg);
       border-radius: 20px;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
       backdrop-filter: blur(10px);
       border: 1px solid rgba(255, 255, 255, 0.4);
       font-family: 'Arial', sans-serif;
       overflow: hidden;
-      transition: height 0.5s ease;
+      transition: height 0.5s ease, background-color 0.5s ease;
       z-index: 9999;
     }
     .music-widget.collapsed {
       height: 50px;
     }
     .music-widget.expanded {
-      height: 340px; 
+      height: 340px;
     }
     .music-header {
       display: flex;
@@ -243,19 +355,20 @@
     }
     .music-header .music-title {
       font-size: 14px;
-      color: #333;
+      color: var(--text-color);
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
       max-width: 70%;
+      transition: color 0.5s ease;
     }
     .music-header .music-toggle-btn {
       font-size: 18px;
-      color: #333;
+      color: var(--text-color);
       background: none;
       border: none;
       cursor: none;
-      transition: transform 0.3s ease;
+      transition: transform 0.3s ease, color 0.5s ease;
     }
     .music-header .music-toggle-btn:hover {
       transform: scale(1.2);
@@ -316,6 +429,8 @@
     }
     .progress-container span {
       font-size: 12px;
+      color: var(--text-color);
+      transition: color 0.5s ease;
     }
     .progress-bar {
       width: 150px;
@@ -335,6 +450,12 @@
       border: 2px solid #fff;
       cursor: none;
     }
+
+    /*
+      =========================
+      9. 雪花动画
+      =========================
+    */
     .snowflake {
       position: fixed;
       top: -10px;
@@ -349,6 +470,12 @@
         opacity: 0;
       }
     }
+
+    /*
+      =========================
+      10. 多端适配
+      =========================
+    */
     @media screen and (max-width: 768px) {
       .wrapper {
         padding: 20px;
@@ -401,79 +528,33 @@
         height: 160px;
       }
     }
-    /* ============== 新增：加载动画遮罩层 ============== */
-    #loaderOverlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(135deg, rgba(224,247,250,0.95), rgba(255,224,233,0.95));
-      backdrop-filter: blur(10px);
-      z-index: 100000;
-      overflow: hidden;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    /* 单个加载动画：从屏幕右上角向左下角移动，起始和结束位置向中间靠拢 */
-    .loader-note {
-      position: absolute;
-      width: 100px;
-      height: auto;
-      opacity: 1;
-      /* 初始位置：靠近右上角中间 */
-      left: 80%;
-      top: 15%;
-      animation: moveNote 2s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
-    }
-    @keyframes moveNote {
-      0% {
-        left: 80%;
-        top: 15%;
-        transform: translate(-50%, -50%) scale(1);
-      }
-      50% {
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%) scale(1.2);
-      }
-      100% {
-        left: 20%;
-        top: 85%;
-        transform: translate(-50%, -50%) scale(1);
-      }
-    }
-    @media screen and (max-width: 768px) {
-      .loader-note {
-        width: 70px;
-      }
-    }
-    @media screen and (min-width: 769px) and (max-width: 1024px) {
-      .loader-note {
-        width: 85px;
-      }
-    }
   </style>
 </head>
 <body>
-  <!-- ============== 新增：加载动画遮罩层（请勿动已有内容） ============== -->
+  <!-- 加载动画遮罩层 -->
   <div id="loaderOverlay"></div>
+
   <!-- 自定义鼠标指针元素 -->
   <div class="custom-cursor"></div>
+
   <div class="wrapper">
-    <!-- 提示层：z-index 已提高 -->
-    <div class="floating-hint" id="floatingHint"></div>
+    <!-- 提示层 -->
+    <div class="floating-hint" id="floatingHint">进文件夹请双击</div>
+
     <div class="container">
-      <h1>乐队网盘</h1>
+      <!-- 点击标题切换主题 -->
+      <h1 id="pageTitle">乐队网盘</h1>
+
       <div class="nav-buttons">
         <button onclick="goToMainMenu()">返回主菜单</button>
         <button onclick="goToPreviousMenu()">返回上一菜单</button>
       </div>
+
       <div class="breadcrumb" id="breadcrumb">全部文件 /</div>
       <div class="file-manager" id="fileManager"></div>
     </div>
   </div>
+
   <!-- 折叠式音乐播放器 -->
   <div class="music-widget collapsed" id="musicWidget">
     <div class="music-header" id="musicHeader">
@@ -497,13 +578,14 @@
       </div>
     </div>
   </div>
-  <!-- audio 元素 -->
+
+  <!-- audio 元素，用于播放音乐 -->
   <audio id="audio-player"></audio>
-  <!-- ============== 新增：加载动画 JS（请勿动已有内容） ============== -->
+
+  <!-- ============== 加载动画 JS（请勿动已有内容） ============== -->
   <script>
     window.addEventListener("load", function() {
       const loaderOverlay = document.getElementById('loaderOverlay');
-      // 使用根目录下 cursor 文件夹的 pa.gif 作为加载动画图
       const noteImgSrc = "cursor/pa.gif";
       const note = document.createElement('img');
       note.classList.add('loader-note');
@@ -514,6 +596,7 @@
       }, 2000);
     });
   </script>
+
   <!-- ============== 自定义鼠标指针 JS ============== -->
   <script>
     const customCursor = document.querySelector('.custom-cursor');
@@ -522,6 +605,8 @@
       customCursor.style.top = e.clientY + 'px';
     });
   </script>
+
+  <!-- ============== 网盘与播放器主要功能 JS ============== -->
   <script>
     /* =============== 文件系统数据 =============== */
     const fileSystem = {
@@ -565,7 +650,9 @@
         "1月31日WashU学生会春晚节目选单.pdf": "Pan_Folder/1月31日WashU学生会春晚节目选单.pdf"
       }
     };
+
     let currentPath = ["全部文件"];
+
     function loadFiles(path) {
       const fileManager = document.getElementById('fileManager');
       fileManager.innerHTML = '';
@@ -575,6 +662,7 @@
       }
       for (const name in currentFolder) {
         if (typeof currentFolder[name] === 'object') {
+          // 文件夹
           const folderDiv = document.createElement('div');
           folderDiv.classList.add('item');
           folderDiv.innerHTML = `
@@ -588,6 +676,7 @@
           };
           fileManager.appendChild(folderDiv);
         } else {
+          // 文件
           const fileDiv = document.createElement('div');
           fileDiv.classList.add('item');
           fileDiv.innerHTML = `
@@ -598,6 +687,7 @@
         }
       }
     }
+
     function getFileIcon(filename) {
       const lower = filename.toLowerCase();
       if (lower.endsWith('.pdf')) {
@@ -610,6 +700,7 @@
         return "https://cdn-icons-png.flaticon.com/512/607/607674.png";
       }
     }
+
     function updateBreadcrumb() {
       const breadcrumb = document.getElementById('breadcrumb');
       breadcrumb.innerHTML = '';
@@ -627,11 +718,13 @@
         }
       });
     }
+
     function goToMainMenu() {
       currentPath = ["全部文件"];
       updateBreadcrumb();
       loadFiles(currentPath);
     }
+
     function goToPreviousMenu() {
       if (currentPath.length > 1) {
         currentPath.pop();
@@ -639,9 +732,35 @@
         loadFiles(currentPath);
       }
     }
+
+    // 初始化文件管理器
     updateBreadcrumb();
     loadFiles(currentPath);
-    /* =============== 雪花特效 =============== */
+
+    /*
+      =========================
+      11. 日夜主题切换：点击「乐队网盘」文字
+      =========================
+    */
+    const pageTitle = document.getElementById('pageTitle');
+    let isDarkMode = false;
+
+    pageTitle.addEventListener('click', () => {
+      // 切换 body 的 .dark-theme
+      document.body.classList.toggle('dark-theme');
+      isDarkMode = !isDarkMode;
+      // 同时切换加载动画背景 (#loaderOverlay) 的渐变
+      const loaderOverlay = document.getElementById('loaderOverlay');
+      if (isDarkMode) {
+        loaderOverlay.style.background = 'var(--loader-bg)';
+      } else {
+        loaderOverlay.style.background = 'var(--loader-bg)';
+      }
+    });
+
+    /*
+      =========== 雪花特效 =============
+    */
     function createSnow() {
       const snowflake = document.createElement('div');
       snowflake.classList.add('snowflake');
@@ -656,37 +775,11 @@
       }, 6000);
     }
     setInterval(createSnow, 200);
-    /* =============== 漂浮提示 =============== */
-    function createFloatingHint() {
-      const hint = document.getElementById('floatingHint');
-      hint.textContent = '进入文件夹请双击';
-      hint.onclick = () => hint.remove();
-      setTimeout(() => {
-        if (document.body.contains(hint)) {
-          hint.remove();
-        }
-      }, 9000);
-    }
-    window.onload = createFloatingHint;
-    /* =============== 页面标题隐藏/可见切换 =============== */
-    let originalTitle = document.title;
-    let titleTimer;
-    document.addEventListener("visibilitychange", () => {
-      if (document.hidden) {
-        document.title = "不要离开我～😭";
-        titleTimer = setInterval(() => {
-          document.title =
-            document.title === "不要离开我～😭" ? "快回来！🥺" : "不要离开我～😭";
-        }, 1000);
-      } else {
-        clearInterval(titleTimer);
-        document.title = "欢迎回来！🎉";
-        setTimeout(() => {
-          document.title = originalTitle;
-        }, 1000);
-      }
-    });
-    /* =============== 折叠式音乐播放器功能 =============== */
+  </script>
+
+  <!-- 音乐播放器相关逻辑 -->
+  <script>
+    /* =============== 音乐播放器逻辑 =============== */
     const playlist = [
       { title: "翻滚岩石", src: "music/翻滚岩石.mp3", cover: "zhuanji/翻滚岩石.png" },
       { title: "春日影",   src: "music/春日影.mp3",   cover: "zhuanji/春日影.jpg" },
@@ -710,8 +803,13 @@
     const progressBar    = document.getElementById('progress-bar');
     const currentTimeLabel = document.getElementById('current-time');
     const totalTimeLabel   = document.getElementById('total-time');
+
+    // 默认音量
     audioPlayer.volume = 0.3;
+    // 加载首曲
     loadTrack(currentIndex);
+
+    // 折叠/展开切换
     toggleBtn.addEventListener('click', () => {
       if (musicWidget.classList.contains('collapsed')) {
         musicWidget.classList.remove('collapsed');
@@ -723,11 +821,14 @@
         toggleBtn.textContent = '▲';
       }
     });
+    // 点击顶部栏空白处也可触发展开
     musicHeader.addEventListener('click', (e) => {
       if (e.target.id !== 'toggleBtn') {
         toggleBtn.click();
       }
     });
+
+    // 加载当前索引歌曲
     function loadTrack(index) {
       const track = playlist[index];
       audioPlayer.src = track.src;
@@ -738,9 +839,12 @@
       currentTimeLabel.textContent = "00:00";
       totalTimeLabel.textContent   = "00:00";
     }
+
     audioPlayer.addEventListener('loadedmetadata', () => {
       totalTimeLabel.textContent = formatTime(audioPlayer.duration);
     });
+
+    // 播放/暂停
     playPauseBtn.addEventListener('click', () => {
       if (audioPlayer.paused) {
         audioPlayer.play();
@@ -752,6 +856,8 @@
         playPauseBtn.innerHTML = "▶";
       }
     });
+
+    // 上一首
     prevBtn.addEventListener('click', () => {
       currentIndex--;
       if (currentIndex < 0) currentIndex = playlist.length - 1;
@@ -760,6 +866,8 @@
       songStatus.textContent = `正在播放《${playlist[currentIndex].title}》`;
       playPauseBtn.innerHTML = "⏸";
     });
+
+    // 下一首
     nextBtn.addEventListener('click', () => {
       currentIndex++;
       if (currentIndex >= playlist.length) currentIndex = 0;
@@ -768,6 +876,8 @@
       songStatus.textContent = `正在播放《${playlist[currentIndex].title}》`;
       playPauseBtn.innerHTML = "⏸";
     });
+
+    // 播放进度
     audioPlayer.addEventListener('timeupdate', () => {
       if (!audioPlayer.paused) {
         const progress = (audioPlayer.currentTime / audioPlayer.duration) * 100;
@@ -775,10 +885,14 @@
         currentTimeLabel.textContent = formatTime(audioPlayer.currentTime);
       }
     });
+
+    // 拖动进度条
     progressBar.addEventListener('input', () => {
       const seekTime = (progressBar.value / 100) * audioPlayer.duration;
       audioPlayer.currentTime = seekTime;
     });
+
+    // 自动播放下一首
     audioPlayer.addEventListener('ended', () => {
       currentIndex++;
       if (currentIndex >= playlist.length) currentIndex = 0;
@@ -787,6 +901,8 @@
       songStatus.textContent = `正在播放《${playlist[currentIndex].title}》`;
       playPauseBtn.innerHTML = "⏸";
     });
+
+    // 时间格式化
     function formatTime(seconds) {
       if (isNaN(seconds)) return "00:00";
       const m = Math.floor(seconds / 60);
