@@ -6,16 +6,12 @@
   <title>乐队网盘</title>
   <link rel="icon" type="image/png" href="cursor/pa.gif">
   <style>
-    /* 
-      =========================
-      1. 全局 & 鼠标指针设置
-      =========================
-    */
-    /* 隐藏默认鼠标指针，所有交互元素统一禁止显示系统指针 */
+    /* =========================
+       1. 全局 & 鼠标指针设置
+       ========================= */
     body, button, a, .floating-hint, .music-header, .music-toggle-btn, .player-controls button, .progress-bar {
       cursor: none !important;
     }
-    /* 自定义动态鼠标指针 */
     .custom-cursor {
       position: fixed;
       pointer-events: none;
@@ -27,13 +23,10 @@
       transform: translate(-50%, -50%);
     }
 
-    /* 
-      =========================
-      2. 主题相关：日间/夜间
-      =========================
-    */
+    /* =========================
+       2. 主题相关：日间/夜间
+       ========================= */
     :root {
-      /* 日间主题 - 浅色粉蓝 */
       --bg-gradient: linear-gradient(135deg, #e0f7fa, #ffe0e9);
       --text-color: #333;
       --title-color: #d81b60;
@@ -42,10 +35,11 @@
       --loader-bg: linear-gradient(135deg, rgba(224,247,250,0.95), rgba(255,224,233,0.95));
       --link-color: #64b5f6;
       --card-text: #555;
+      /* 用于鼠标风 offset */
+      --wind-offset: 0px;
     }
-    /* 切换到夜间主题时的深色粉蓝 */
     .dark-theme {
-      --bg-gradient: linear-gradient(135deg, #1b2a3c, #3f2b4d); /* 深色粉蓝渐变 */
+      --bg-gradient: linear-gradient(135deg, #1b2a3c, #3f2b4d);
       --text-color: #ddd;
       --title-color: #ff99cc;
       --container-bg: rgba(30, 30, 40, 0.4);
@@ -53,28 +47,25 @@
       --loader-bg: linear-gradient(135deg, rgba(27,42,60,0.95), rgba(63,43,77,0.95));
       --link-color: #8fc3ff;
       --card-text: #bbb;
+      --wind-offset: 0px;
     }
 
-    /*
-      =========================
-      3. 页面整体样式
-      =========================
-    */
+    /* =========================
+       3. 页面整体样式
+       ========================= */
     html, body {
       margin: 0;
       padding: 0;
       height: 100%;
     }
-    /* 背景 */
     body {
       display: flex;
       flex-direction: column;
       background: var(--bg-gradient);
       color: var(--text-color);
       overflow-x: hidden;
-      transition: background 0.5s ease; /* 主题切换过渡 */
+      transition: background 0.5s ease;
     }
-    /* 容器 wrapper */
     .wrapper {
       flex: 1;
       display: flex;
@@ -84,7 +75,6 @@
       box-sizing: border-box;
       position: relative;
     }
-    /* 容器 container */
     .container {
       max-width: 80%;
       width: 100%;
@@ -99,47 +89,41 @@
       z-index: 1;
       transition: background-color 0.5s ease;
     }
-    /* 标题 - 点击后切换主题 */
     h1 {
       text-align: center;
       color: var(--title-color);
       margin-bottom: 20px;
-      transition: color 1s ease;
+      transition: color 1s ease, transform 0.4s ease;
       cursor: none;
     }
     h1:hover {
-        text-decoration: none;
-        transform: scale(1.05);
-        transition: transform 0.4s ease;
-      }
-      
+      transform: scale(1.05);
+    }
 
-    /*
-      =========================
-      4. 加载动画遮罩层
-      =========================
-    */
+    /* =========================
+       4. 加载动画遮罩层
+       ========================= */
     #loaderOverlay {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: var(--loader-bg); /* 跟随主题变化 */
+      background: var(--loader-bg);
       backdrop-filter: blur(10px);
       z-index: 100000;
       overflow: hidden;
       display: flex;
       justify-content: center;
       align-items: center;
-      transition: background 1s ease; /* 切换主题时也可平滑过渡 */
+      transition: background 1s ease;
     }
-    /* loader-note 动画 */
     .loader-note {
       position: absolute;
       width: 100px;
       height: auto;
       opacity: 1;
+      /* 初始位置：靠近右上角 */
       left: 80%;
       top: 15%;
       animation: moveNote 2s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
@@ -162,11 +146,9 @@
       }
     }
 
-    /*
-      =========================
-      5. 其它元素：提示文字、面包屑、文件卡片等
-      =========================
-    */
+    /* =========================
+       5. 其它元素
+       ========================= */
     .hint {
       font-size: 12px;
       color: var(--text-color);
@@ -190,7 +172,6 @@
       grid-template-columns: repeat(6, 1fr);
       gap: 24px;
     }
-    /* 文件/文件夹卡片 */
     .item {
       position: relative;
       overflow: hidden;
@@ -249,11 +230,9 @@
       text-decoration: underline;
     }
 
-    /*
-      =========================
-      6. 导航按钮
-      =========================
-    */
+    /* =========================
+       6. 导航按钮
+       ========================= */
     .nav-buttons {
       display: flex;
       justify-content: space-between;
@@ -277,11 +256,9 @@
       transform: translateY(-2px);
     }
 
-    /*
-      =========================
-      7. 提示层
-      =========================
-    */
+    /* =========================
+       7. 提示层
+       ========================= */
     .floating-hint {
       position: absolute;
       top: 35%;
@@ -319,11 +296,9 @@
       }
     }
 
-    /*
-      =========================
-      8. 音乐播放器
-      =========================
-    */
+    /* =========================
+       8. 音乐播放器
+       ========================= */
     .music-widget {
       position: fixed;
       bottom: 20px;
@@ -451,31 +426,30 @@
       cursor: none;
     }
 
-    /*
-      =========================
-      9. 雪花动画
-      =========================
-    */
+    /* =========================
+       9. 花瓣（雪花）动画
+       ========================= */
     .snowflake {
       position: fixed;
       top: -10px;
       color: #ffffff;
       pointer-events: none;
+      transform: rotate(var(--initial-rotation, 0deg));
       animation: fall linear forwards;
       z-index: 9998;
     }
     @keyframes fall {
       to {
-        transform: translateY(100vh);
+        /* 最终位移 = Y方向落到底 + X方向受风 (windX) + 自身旋转 */
+        transform: translateX(var(--wind-offset, 0px)) translateY(100vh)
+                   rotate(calc(var(--initial-rotation, 0deg) + var(--rotate-amount, 360deg)));
         opacity: 0;
       }
     }
 
-    /*
-      =========================
-      10. 多端适配
-      =========================
-    */
+    /* =========================
+       10. 多端适配
+       ========================= */
     @media screen and (max-width: 768px) {
       .wrapper {
         padding: 20px;
@@ -514,8 +488,6 @@
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         opacity: 0;
         animation: fadeIn 1s forwards, fadeOut 5s 4s forwards;
-        cursor: none;
-        z-index: 99999;
       }
       .music-widget {
         width: 90%;
@@ -527,29 +499,46 @@
       .song-cover-wrapper {
         height: 160px;
       }
+      h1 {
+        font-size: 20px;
+      }
+    }
+
+    /* =========================
+       11. 主题切换过渡层
+       ========================= */
+    #themeTransition {
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 99998;
+      background: var(--bg-gradient);
+      transform: scale(0);
+      opacity: 1;
+      transition: transform 0.7s ease-in-out, opacity 0.7s ease-in-out;
     }
   </style>
 </head>
 <body>
+  <!-- 主题切换过渡层 -->
+  <div id="themeTransition"></div>
+
   <!-- 加载动画遮罩层 -->
   <div id="loaderOverlay"></div>
 
-  <!-- 自定义鼠标指针元素 -->
+  <!-- 自定义鼠标指针 -->
   <div class="custom-cursor"></div>
 
   <div class="wrapper">
-    <!-- 提示层 -->
-    <div class="floating-hint" id="floatingHint">进文件夹请双击，点击“乐队网盘” 切换主题</div>
-
+    <!-- 浮动提示 -->
+    <div class="floating-hint" id="floatingHint">进文件夹请双击，点击“乐队网盘”切换主题</div>
     <div class="container">
-      <!-- 点击标题切换主题 -->
+      <!-- 标题作为主题切换按钮 -->
       <h1 id="pageTitle">乐队网盘</h1>
-
       <div class="nav-buttons">
         <button onclick="goToMainMenu()">返回主菜单</button>
         <button onclick="goToPreviousMenu()">返回上一菜单</button>
       </div>
-
       <div class="breadcrumb" id="breadcrumb">全部文件 /</div>
       <div class="file-manager" id="fileManager"></div>
     </div>
@@ -579,11 +568,11 @@
     </div>
   </div>
 
-  <!-- audio 元素，用于播放音乐 -->
+  <!-- audio 元素 -->
   <audio id="audio-player"></audio>
 
-  <!-- ============== 加载动画 JS（请勿动已有内容） ============== -->
   <script>
+    /* ============== 加载动画 JS ============== */
     window.addEventListener("load", function() {
       const loaderOverlay = document.getElementById('loaderOverlay');
       const noteImgSrc = "cursor/pa.gif";
@@ -595,20 +584,15 @@
         loaderOverlay.style.display = "none";
       }, 2000);
     });
-  </script>
 
-  <!-- ============== 自定义鼠标指针 JS ============== -->
-  <script>
+    /* ============== 自定义鼠标指针 JS ============== */
     const customCursor = document.querySelector('.custom-cursor');
     document.addEventListener('mousemove', (e) => {
       customCursor.style.left = e.clientX + 'px';
       customCursor.style.top = e.clientY + 'px';
     });
-  </script>
 
-  <!-- ============== 网盘与播放器主要功能 JS ============== -->
-  <script>
-    /* =============== 文件系统数据 =============== */
+    /* ============== 文件管理 & 面包屑 ============== */
     const fileSystem = {
       "全部文件": {
         "谱子": {
@@ -652,7 +636,6 @@
     };
 
     let currentPath = ["全部文件"];
-
     function loadFiles(path) {
       const fileManager = document.getElementById('fileManager');
       fileManager.innerHTML = '';
@@ -687,7 +670,6 @@
         }
       }
     }
-
     function getFileIcon(filename) {
       const lower = filename.toLowerCase();
       if (lower.endsWith('.pdf')) {
@@ -700,7 +682,6 @@
         return "https://cdn-icons-png.flaticon.com/512/607/607674.png";
       }
     }
-
     function updateBreadcrumb() {
       const breadcrumb = document.getElementById('breadcrumb');
       breadcrumb.innerHTML = '';
@@ -718,13 +699,11 @@
         }
       });
     }
-
     function goToMainMenu() {
       currentPath = ["全部文件"];
       updateBreadcrumb();
       loadFiles(currentPath);
     }
-
     function goToPreviousMenu() {
       if (currentPath.length > 1) {
         currentPath.pop();
@@ -732,54 +711,92 @@
         loadFiles(currentPath);
       }
     }
-
-    // 初始化文件管理器
     updateBreadcrumb();
     loadFiles(currentPath);
 
-    /*
-      =========================
-      11. 日夜主题切换：点击「乐队网盘」文字
-      =========================
-    */
+    /* =========================
+       12. 日夜主题切换
+       ========================= */
     const pageTitle = document.getElementById('pageTitle');
     let isDarkMode = false;
-
-    pageTitle.addEventListener('click', () => {
-      // 切换 body 的 .dark-theme
-      document.body.classList.toggle('dark-theme');
-      isDarkMode = !isDarkMode;
-      // 同时切换加载动画背景 (#loaderOverlay) 的渐变
-      const loaderOverlay = document.getElementById('loaderOverlay');
-      if (isDarkMode) {
-        loaderOverlay.style.background = 'var(--loader-bg)';
-      } else {
-        loaderOverlay.style.background = 'var(--loader-bg)';
-      }
+    pageTitle.addEventListener('click', (e) => {
+      const themeTransition = document.getElementById('themeTransition');
+      const rect = pageTitle.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      const maxSize = Math.max(window.innerWidth, window.innerHeight) * 1.5;
+      themeTransition.style.width = maxSize + 'px';
+      themeTransition.style.height = maxSize + 'px';
+      themeTransition.style.left = centerX + 'px';
+      themeTransition.style.top = centerY + 'px';
+      themeTransition.style.transform = 'translate(-50%, -50%) scale(0)';
+      themeTransition.style.opacity = '1';
+      requestAnimationFrame(() => {
+        themeTransition.style.transform = 'translate(-50%, -50%) scale(1)';
+      });
+      setTimeout(() => {
+        document.body.classList.toggle('dark-theme');
+        isDarkMode = !isDarkMode;
+      }, 350);
+      setTimeout(() => {
+        themeTransition.style.transform = 'translate(-50%, -50%) scale(0)';
+        themeTransition.style.opacity = '0';
+      }, 700);
     });
 
-    /*
-      =========== 雪花特效 =============
-    */
+    /* =========================
+       13. 花瓣特效 & 鼠标风效果
+       ========================= */
+    // 平滑风力
+    let targetWindX = 0;   // 鼠标瞬时移动目标
+    let windX = 0;         // 当前实际风力（平滑逼近目标）
+    // 鼠标移动时，更新 targetWindX
+    document.addEventListener('mousemove', (e) => {
+      // 可以根据需要调整放大系数
+      targetWindX = e.movementX * 3;
+    });
+    // 每帧平滑逼近 targetWindX
+    function updateWind() {
+      // 这里 0.1 表示平滑系数
+      windX += (targetWindX - windX) * 0.1;
+      // 将 windX 设置到全局 CSS 变量
+      document.documentElement.style.setProperty('--wind-offset', windX + 'px');
+      requestAnimationFrame(updateWind);
+    }
+    updateWind();
+
+    // 创建花瓣
     function createSnow() {
       const snowflake = document.createElement('div');
       snowflake.classList.add('snowflake');
+      // 使用花瓣符号或emoji
       snowflake.innerHTML = '🌸';
+      // 随机水平位置
       snowflake.style.left = Math.random() * 100 + 'vw';
+      // 随机不透明度与字体大小
       snowflake.style.opacity = Math.random() * 0.8 + 0.2;
       snowflake.style.fontSize = Math.random() * 20 + 10 + 'px';
-      snowflake.style.animationDuration = Math.random() * 3 + 3 + 's';
+      // 随机初始旋转和旋转增量
+      const initRot = Math.floor(Math.random() * 360) + 'deg';
+      const rotateAmt = (Math.random() * 360 + 180) + 'deg';
+      snowflake.style.setProperty('--initial-rotation', initRot);
+      snowflake.style.setProperty('--rotate-amount', rotateAmt);
+      // 随机动画时长 4~6秒
+      const animDuration = Math.random() * 2 + 4;
+      snowflake.style.animationDuration = animDuration + 's';
       document.body.appendChild(snowflake);
       setTimeout(() => {
         snowflake.remove();
-      }, 6000);
+      }, animDuration * 1000);
     }
     setInterval(createSnow, 200);
+
   </script>
 
-  <!-- 音乐播放器相关逻辑 -->
+  <!-- =========================
+       14. 音乐播放器相关逻辑
+       ========================= -->
   <script>
-    /* =============== 音乐播放器逻辑 =============== */
     const playlist = [
       { title: "翻滚岩石", src: "music/翻滚岩石.mp3", cover: "zhuanji/翻滚岩石.png" },
       { title: "春日影",   src: "music/春日影.mp3",   cover: "zhuanji/春日影.jpg" },
@@ -804,9 +821,7 @@
     const currentTimeLabel = document.getElementById('current-time');
     const totalTimeLabel   = document.getElementById('total-time');
 
-    // 默认音量
     audioPlayer.volume = 0.3;
-    // 加载首曲
     loadTrack(currentIndex);
 
     // 折叠/展开切换
@@ -828,7 +843,6 @@
       }
     });
 
-    // 加载当前索引歌曲
     function loadTrack(index) {
       const track = playlist[index];
       audioPlayer.src = track.src;
@@ -902,7 +916,6 @@
       playPauseBtn.innerHTML = "⏸";
     });
 
-    // 时间格式化
     function formatTime(seconds) {
       if (isNaN(seconds)) return "00:00";
       const m = Math.floor(seconds / 60);
