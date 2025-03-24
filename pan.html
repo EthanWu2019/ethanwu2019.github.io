@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -517,6 +517,51 @@
       opacity: 1;
       transition: transform 0.7s ease-in-out, opacity 0.7s ease-in-out;
     }
+
+    /* =========================
+       12. 访客信息卡片的额外样式
+       ========================= */
+      /* 访客信息卡片：占两列、两行，去掉滚动条，减小间距 */
+    .visitor-card {
+      grid-column: span 2; /* 宽度占2列 */
+      grid-row: span 2;    /* 高度占2行 */
+      padding: 12px;       /* 适当减少内边距 */
+    }
+
+    /* 缩小图标尺寸，避免卡片过高 */
+    .visitor-card img {
+      margin-right: 12px;
+      width: 48px;
+      height: 48px;
+    }
+
+    /* 减小行距 */
+    /* 访客信息卡片：文字左对齐，每个 title 独占一行 */
+    .visitor-info-text {
+      text-align: left; /* 整体左对齐 */
+    }
+    
+    .info-line {
+      margin-bottom: 6px; /* 每条信息之间的间距 */
+    }
+    
+    .info-title {
+      display: inline;   /* 与内容在同一行 */
+      font-weight: bold;
+      margin-right: 6px; /* 标题与内容的间隔 */
+    }
+    
+    .info-value {
+      display: inline;   /* 与标题在同一行 */
+    }
+    /* 移动端也让它独占一行即可 */
+    @media screen and (max-width: 768px) {
+      .visitor-card {
+        /* 如果想在手机端保持两行高度，可不改；若想只占一行可改为 span 1 */
+        /* grid-row: span 1; */
+        padding: 10px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -643,6 +688,7 @@
       for (const part of path) {
         currentFolder = currentFolder[part];
       }
+      // 遍历当前文件夹的内容
       for (const name in currentFolder) {
         if (typeof currentFolder[name] === 'object') {
           // 文件夹
@@ -669,7 +715,52 @@
           fileManager.appendChild(fileDiv);
         }
       }
+
+      // 如果当前路径为根目录，则加入访客信息卡片
+      if (currentPath.length === 1) {
+        const visitorCard = document.createElement('div');
+        visitorCard.classList.add('item', 'visitor-card');
+        visitorCard.innerHTML = `
+          <img src="https://cdn-icons-png.flaticon.com/512/2922/2922510.png" alt="Visitor Info Icon">
+          <div class="visitor-info-text">
+            <div class="info-line">
+              <span class="info-title">操作系统：</span>
+              <span class="info-value" id="osValue">加载中...</span>
+            </div>
+            <div class="info-line">
+              <span class="info-title">浏览器：</span>
+              <span class="info-value" id="browserValue">加载中...</span>
+            </div>
+            <div class="info-line">
+              <span class="info-title">屏幕：</span>
+              <span class="info-value" id="screenValue">加载中...</span>
+            </div>
+            <div class="info-line">
+              <span class="info-title">IP地址：</span>
+              <span class="info-value" id="ipValue">加载中...</span>
+            </div>
+          </div>
+        `;
+        // 插入到文件管理器的首位，与其它根目录项平级
+        fileManager.insertBefore(visitorCard, fileManager.firstChild);
+
+        // 收集访客信息
+        document.getElementById('osValue').textContent = navigator.platform;
+        document.getElementById('browserValue').textContent = navigator.userAgent;
+        document.getElementById('screenValue').textContent = window.screen.width + 'x' + window.screen.height;
+
+        // 通过第三方 API 获取 IP 地址
+        fetch('https://api.ipify.org?format=json')
+          .then(response => response.json())
+          .then(data => {
+            document.getElementById('ipValue').textContent = data.ip;
+          })
+          .catch(error => {
+            document.getElementById('ipValue').textContent = '获取失败';
+          });
+      }
     }
+
     function getFileIcon(filename) {
       const lower = filename.toLowerCase();
       if (lower.endsWith('.pdf')) {
@@ -682,6 +773,7 @@
         return "https://cdn-icons-png.flaticon.com/512/607/607674.png";
       }
     }
+
     function updateBreadcrumb() {
       const breadcrumb = document.getElementById('breadcrumb');
       breadcrumb.innerHTML = '';
@@ -699,11 +791,13 @@
         }
       });
     }
+
     function goToMainMenu() {
       currentPath = ["全部文件"];
       updateBreadcrumb();
       loadFiles(currentPath);
     }
+
     function goToPreviousMenu() {
       if (currentPath.length > 1) {
         currentPath.pop();
@@ -711,11 +805,12 @@
         loadFiles(currentPath);
       }
     }
+
     updateBreadcrumb();
     loadFiles(currentPath);
 
     /* =========================
-       12. 日夜主题切换
+       13. 日夜主题切换
        ========================= */
     const pageTitle = document.getElementById('pageTitle');
     let isDarkMode = false;
@@ -745,7 +840,7 @@
     });
 
     /* =========================
-       13. 花瓣特效 & 鼠标风效果
+       14. 花瓣特效 & 鼠标风效果
        ========================= */
     // 平滑风力
     let targetWindX = 0;   // 鼠标瞬时移动目标
@@ -794,7 +889,7 @@
   </script>
 
   <!-- =========================
-       14. 音乐播放器相关逻辑
+       15. 音乐播放器相关逻辑
        ========================= -->
   <script>
     const playlist = [
