@@ -5,693 +5,668 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>乐队网盘</title>
   <link rel="icon" type="image/png" href="cursor/pa.gif">
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=ZCOOL+QingKe+HuangYou&display=swap');
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=ZCOOL+QingKe+HuangYou&display=swap');
 
+/* =========================
+   1. 全局 & 鼠标指针设置
+   ========================= */
+body, button, a, .floating-hint, .music-header, .music-toggle-btn, .player-controls button, .progress-bar {
+  cursor: none !important;
+}
+.custom-cursor {
+  position: fixed;
+  pointer-events: none;
+  width: 32px;
+  height: 32px;
+  background: url('cursor/pa.gif') no-repeat center center;
+  background-size: contain;
+  z-index: 1000000;
+  transform: translate(-50%, -50%);
+}
 
-    /* =========================
-       1. 全局 & 鼠标指针设置
-       ========================= */
-    body, button, a, .floating-hint, .music-header, .music-toggle-btn, .player-controls button, .progress-bar {
-      cursor: none !important;
-    }
-    .custom-cursor {
-      position: fixed;
-      pointer-events: none;
-      width: 32px;
-      height: 32px;
-      background: url('cursor/pa.gif') no-repeat center center;
-      background-size: contain;
-      z-index: 1000000;
-      transform: translate(-50%, -50%);
-    }
+/* =========================
+   2. 主题相关：日间/夜间
+   ========================= */
+/* —— 日间模式（赛博朋克白天风）：主色调为深蓝/紫，霓虹粉与蓝绿点缀 —— */
+:root {
+  --bg-gradient: linear-gradient(135deg, #141e30, #243b55);  /* 深蓝渐变背景 */
+  --text-color: #e0e0e0;       /* 浅灰文字 */
+  --title-color: #ff2d95;      /* 霓虹粉标题 */
+  --container-bg: rgba(20,30,48,0.8);  /* 深色半透明容器 */
+  --card-bg: rgba(20,30,48,0.9);       /* 卡片背景 */
+  --loader-bg: linear-gradient(135deg, rgba(20,30,48,0.95), rgba(36,55,85,0.95));
+  --link-color: #64ffda;       /* 霓虹蓝绿链接 */
+  --card-text: #e0e0e0;        /* 卡片文字颜色 */
+  --wind-offset: 0px;
+}
 
-    /* =========================
-       2. 主题相关：日间/夜间
-       ========================= */
-    :root {
-      --bg-gradient: linear-gradient(135deg, #e0f7fa, #ffe0e9);
-      --text-color: #333;
-      --title-color: #d81b60;
-      --container-bg: rgba(255, 255, 255, 0.4);
-      --card-bg: rgba(255, 255, 255, 0.6);
-      --loader-bg: linear-gradient(135deg, rgba(224,247,250,0.95), rgba(255,224,233,0.95));
-      --link-color: #64b5f6;
-      --card-text: #555;
-      /* 用于鼠标风 offset */
-      --wind-offset: 0px;
-    }
-    .dark-theme {
-      --bg-gradient: linear-gradient(135deg, #1b2a3c, #3f2b4d);
-      --text-color: #ddd;
-      --title-color: #ff99cc;
-      --container-bg: rgba(30, 30, 40, 0.4);
-      --card-bg: rgba(40, 40, 50, 0.6);
-      --loader-bg: linear-gradient(135deg, rgba(27,42,60,0.95), rgba(63,43,77,0.95));
-      --link-color: #8fc3ff;
-      --card-text: #bbb;
-      --wind-offset: 0px;
-    }
+/* —— 夜间模式（赛博朋克夜）：更暗、更冷的调调 */
+.dark-theme {
+  --bg-gradient: linear-gradient(135deg, #0d0d0d, #1a1a1a);
+  --text-color: #a8a8a8;
+  --title-color: #ff2d95;
+  --container-bg: rgba(30,30,30,0.8);
+  --card-bg: rgba(30,30,30,0.9);
+  --loader-bg: linear-gradient(135deg, rgba(20,20,20,0.95), rgba(40,40,40,0.95));
+  --link-color: #64ffda;
+  --card-text: #a8a8a8;
+  --wind-offset: 0px;
+}
 
-    /* =========================
-       3. 页面整体样式
-       ========================= */
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-    }
-    body {
-      display: flex;
-      flex-direction: column;
-      background: var(--bg-gradient);
-      color: var(--text-color);
-      overflow-x: hidden;
-      transition: background 0.5s ease;
-    }
-    .wrapper {
-      flex: 1;
-      display: flex;
-      justify-content: flex-start;
-      align-items: flex-start;
-      padding: 20px;
-      box-sizing: border-box;
-      position: relative;
-    }
-    .container {
-      max-width: 80%;
-      width: 100%;
-      margin: 70px auto 0 auto;
-      padding: 30px;
-      border-radius: 12px;
-      background-color: var(--container-bg);
-      backdrop-filter: blur(10px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      box-sizing: border-box;
-      position: relative;
-      z-index: 1;
-      transition: background-color 0.5s ease;
-    }
-    h1 {
-      text-align: center;
-      color: var(--title-color);
-      margin-bottom: 20px;
-      transition: color 1s ease, transform 0.4s ease;
-      cursor: none;
-    }
-    h1:hover {
-      transform: scale(1.05);
-    }
+/* =========================
+   3. 页面整体样式
+   ========================= */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+body {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-gradient);
+  color: var(--text-color);
+  overflow-x: hidden;
+  transition: background 0.5s ease;
+}
+.wrapper {
+  flex: 1;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: 20px;
+  box-sizing: border-box;
+  position: relative;
+}
+.container {
+  max-width: 80%;
+  width: 100%;
+  margin: 70px auto 0 auto;
+  padding: 30px;
+  border-radius: 12px;
+  background-color: var(--container-bg);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  position: relative;
+  z-index: 1;
+  transition: background-color 0.5s ease;
+}
+h1 {
+  text-align: center;
+  color: var(--title-color);
+  margin-bottom: 20px;
+  transition: color 1s ease, transform 0.4s ease;
+  cursor: none;
+}
+h1:hover {
+  transform: scale(1.05);
+}
 
-    /* =========================
-       4. 加载动画遮罩层
-       ========================= */
-    #loaderOverlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: var(--loader-bg);
-      backdrop-filter: blur(10px);
-      z-index: 100000;
-      overflow: hidden;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      transition: background 1s ease;
-    }
-    .loader-note {
-      position: absolute;
-      width: 100px;
-      height: auto;
-      opacity: 1;
-      /* 初始位置：靠近右上角 */
-      left: 80%;
-      top: 15%;
-      animation: moveNote 2s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
-    }
-    @keyframes moveNote {
-      0% {
-        left: 80%;
-        top: 15%;
-        transform: translate(-50%, -50%) scale(1);
-      }
-      50% {
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%) scale(1.2);
-      }
-      100% {
-        left: 20%;
-        top: 85%;
-        transform: translate(-50%, -50%) scale(1);
-      }
-    }
+/* =========================
+   4. 加载动画遮罩层
+   ========================= */
+#loaderOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--loader-bg);
+  backdrop-filter: blur(10px);
+  z-index: 100000;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background 1s ease;
+}
+.loader-note {
+  position: absolute;
+  width: 100px;
+  height: auto;
+  opacity: 1;
+  left: 80%;
+  top: 15%;
+  animation: moveNote 2s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+}
+@keyframes moveNote {
+  0% {
+    left: 80%;
+    top: 15%;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+  100% {
+    left: 20%;
+    top: 85%;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
 
-    /* =========================
-       5. 其它元素
-       ========================= */
-    .hint {
-      font-size: 12px;
-      color: var(--text-color);
-      text-align: center;
-      margin-top: -10px;
-      margin-bottom: 20px;
-      opacity: 0.8;
-      transition: opacity 0.3s ease;
-    }
-    .breadcrumb {
-      font-size: 14px;
-      color: var(--text-color);
-      margin-bottom: 20px;
-      transition: color 0.5s ease;
-    }
-    .breadcrumb span {
-      color: var(--link-color);
-    }
-    .file-manager {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 24px;
-    }
-    .item {
-      position: relative;
-      overflow: hidden;
-      background-color: var(--card-bg);
-      backdrop-filter: blur(8px);
-      border-radius: 12px;
-      padding: 16px;
-      text-align: center;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      cursor: none;
-      transform-style: preserve-3d;
-      perspective: 2000px;
-      transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.5s ease;
-    }
-    .item img {
-      width: 64px;
-      height: 64px;
-      margin-bottom: 12px;
-    }
-    .item span {
-      display: block;
-      font-size: 14px;
-      color: var(--card-text);
-      word-break: break-word;
-      transition: color 0.5s ease;
-    }
-    .item:hover {
-      transform: perspective(1000px) rotateX(5deg) rotateY(5deg) translateY(-2px);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-    }
-    .item::before {
-      content: "";
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 0;
-      height: 0;
-      background: linear-gradient(45deg, rgba(255,153,204,0.3), rgba(102,204,255,0.3));
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      pointer-events: none;
-      transition: width 0.6s ease, height 0.6s ease, opacity 0.6s ease;
-      opacity: 0;
-    }
-    .item:hover::before {
-      width: 200%;
-      height: 200%;
-      opacity: 1;
-    }
+/* =========================
+   5. 其它元素
+   ========================= */
+.hint {
+  font-size: 12px;
+  color: var(--text-color);
+  text-align: center;
+  margin-top: -10px;
+  margin-bottom: 20px;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
+.breadcrumb {
+  font-size: 14px;
+  color: var(--text-color);
+  margin-bottom: 20px;
+  transition: color 0.5s ease;
+}
+.breadcrumb span {
+  color: var(--link-color);
+}
+.file-manager {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 24px;
+}
+.item {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--card-bg);
+  backdrop-filter: blur(8px);
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  cursor: none;
+  transform-style: preserve-3d;
+  perspective: 2000px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.5s ease;
+}
+.item img {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 12px;
+}
+.item span {
+  display: block;
+  font-size: 14px;
+  color: var(--card-text);
+  word-break: break-word;
+  transition: color 0.5s ease;
+}
+.item:hover {
+  transform: perspective(1000px) rotateX(5deg) rotateY(5deg) translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+.item::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: linear-gradient(45deg, rgba(255,45,149,0.3), rgba(100,255,218,0.3));
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  transition: width 0.6s ease, height 0.6s ease, opacity 0.6s ease;
+  opacity: 0;
+}
+.item:hover::before {
+  width: 200%;
+  height: 200%;
+  opacity: 1;
+}
+.item a {
+  text-decoration: none;
+  color: var(--link-color);
+  cursor: none;
+}
+.item a:hover {
+  text-decoration: underline;
+}
+
+/* =========================
+   6. 导航按钮
+   ========================= */
+.nav-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.nav-buttons button {
+  background-color: rgba(20,30,48,0.8);
+  backdrop-filter: blur(8px);
+  color: #e0e0e0;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: none;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+.nav-buttons button:hover {
+  background-color: rgba(20,30,48,0.9);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.6);
+  transform: translateY(-2px);
+}
+
+/* =========================
+   7. 提示层
+   ========================= */
+.floating-hint {
+  position: absolute;
+  top: 35%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: auto;
+  max-width: 320px;
+  background-color: rgba(20,30,48,0.8);
+  backdrop-filter: blur(10px);
+  color: #e0e0e0;
+  padding: 12px 20px;
+  border-radius: 20px;
+  font-size: 14px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  animation: fadeIn 1s forwards, fadeOut 5s 4s forwards;
+  cursor: none;
+  z-index: 99999;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -60%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    transform: translate(-50%, -40%);
+  }
+}
+
+/* =========================
+   8. 音乐播放器
+   ========================= */
+.music-widget {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 280px;
+  background: var(--card-bg);
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(20,30,48,0.8);
+  font-family: 'Arial', sans-serif;
+  overflow: hidden;
+  transition: height 0.5s ease, background-color 0.5s ease;
+  z-index: 9999;
+}
+.music-widget.collapsed {
+  height: 50px;
+}
+.music-widget.expanded {
+  height: 340px;
+}
+.music-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 50px;
+  padding: 0 15px;
+  cursor: none;
+}
+.music-header .music-title {
+  font-size: 14px;
+  color: var(--text-color);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 70%;
+  transition: color 0.5s ease;
+}
+.music-header .music-toggle-btn {
+  font-size: 18px;
+  color: var(--text-color);
+  background: none;
+  border: none;
+  cursor: none;
+  transition: transform 0.3s ease, color 0.5s ease;
+}
+.music-header .music-toggle-btn:hover {
+  transform: scale(1.2);
+}
+.music-body {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+  transition: opacity 0.3s ease;
+}
+.music-widget.expanded .music-body {
+  display: flex;
+}
+.song-cover-wrapper {
+  width: 100%;
+  height: 140px;
+  overflow: hidden;
+  border-radius: 15px;
+  clip-path: inset(0 round 15px);
+}
+.song-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.song-status {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #e0e0e0;
+  text-align: center;
+}
+.player-controls {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+.player-controls button {
+  background-color: rgba(20,30,48,0.8);
+  backdrop-filter: blur(6px);
+  border: none;
+  border-radius: 8px;
+  padding: 5px 10px;
+  cursor: none;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+.player-controls button:hover {
+  background-color: rgba(20,30,48,0.9);
+}
+.progress-container {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.progress-container span {
+  font-size: 12px;
+  color: var(--text-color);
+  transition: color 0.5s ease;
+}
+.progress-bar {
+  width: 150px;
+  -webkit-appearance: none;
+  background: rgba(0,0,0,0.1);
+  height: 4px;
+  border-radius: 2px;
+  outline: none;
+  cursor: none;
+}
+.progress-bar::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #ff2d95;
+  border: 2px solid #fff;
+  cursor: none;
+}
+
+/* =========================
+   9. 花瓣（雪花）动画
+   ========================= */
+.snowflake {
+  position: fixed;
+  top: -10px;
+  color: #fff;
+  pointer-events: none;
+  transform: rotate(var(--initial-rotation, 0deg));
+  animation: fall linear forwards;
+  z-index: 9998;
+}
+@keyframes fall {
+  to {
+    transform: translateX(var(--wind-offset, 0px)) translateY(100vh)
+               rotate(calc(var(--initial-rotation, 0deg) + var(--rotate-amount, 360deg)));
+    opacity: 0;
+  }
+}
+
+/* =========================
+   10. 多端适配
+   ========================= */
+@media screen and (max-width: 768px) {
+  .wrapper {
+    padding: 20px;
+  }
+  .container {
+    max-width: 100%;
+    margin: 30px auto 0 auto;
+    padding: 20px;
+  }
+  .file-manager {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .item {
+    padding: 12px;
+  }
+  .item img {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 8px;
+  }
+  .item span {
+    font-size: 12px;
+  }
+  .floating-hint {
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 320px;
+    background-color: rgba(20,30,48,0.8);
+    backdrop-filter: blur(10px);
+    color: #e0e0e0;
+    padding: 12px 20px;
+    border-radius: 20px;
+    font-size: 14px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+    opacity: 0;
+    animation: fadeIn 1s forwards, fadeOut 5s 4s forwards;
+  }
+  .music-widget {
+    width: 90%;
+    right: 5%;
+  }
+  .music-widget.expanded {
+    height: 380px;
+  }
+  .song-cover-wrapper {
+    height: 160px;
+  }
+  h1 {
+    font-size: 20px;
+  }
+}
+
+/* =========================
+   11. 主题切换过渡层
+   ========================= */
+#themeTransition {
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 99998;
+  background: var(--bg-gradient);
+  transform: scale(0);
+  opacity: 1;
+  transition: transform 0.7s ease-in-out, opacity 0.7s ease-in-out;
+}
+
+/* =========================
+   12. 访客信息卡片的额外样式
+   ========================= */
+.visitor-card {
+  grid-column: span 2;
+  grid-row: span 2;
+  padding: 12px;
+}
+.visitor-card img {
+  margin-right: 12px;
+  width: 48px;
+  height: 48px;
+}
+.visitor-info-text {
+  text-align: left;
+}
+.info-line {
+  margin-bottom: 6px;
+}
+.info-title {
+  display: inline;
+  font-weight: bold;
+  margin-right: 6px;
+}
+.info-value {
+  display: inline;
+}
+@media screen and (max-width: 768px) {
+  .visitor-card {
+    padding: 10px;
+  }
+}
+
+/* 下载链接闪光进度条效果 - 弹性自然 */
+a.flash-progress {
+  position: relative;
+  overflow: hidden;
+}
+a.flash-progress::after {
+  content: "";
+  position: absolute;
+  left: -100%;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,45,149,0.6), transparent);
+  animation: flash-progress 1s cubic-bezier(0.25,0.46,0.45,0.94) forwards;
+}
+@keyframes flash-progress {
+  0% { left: -100%; }
+  50% { left: 100%; }
+  65% { left: 92%; }
+  80% { left: 107%; }
+  100% { left: 100%; }
+}
+
+/* 文件夹涟漪扩散效果 */
+.item .ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255,45,149,0.5);
+  transform: scale(0);
+  animation: ripple-animation 0.6s linear;
+  pointer-events: none;
+}
+@keyframes ripple-animation {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* 彩带烟花效果 */
+.firework {
+  position: fixed;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  opacity: 1;
+  pointer-events: none;
+  z-index: 100000;
+  animation: firework-animation 1s ease-out forwards;
+}
+@keyframes firework-animation {
+  0% {
+    transform: translate(0,0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--x), var(--y)) scale(0.5);
+    opacity: 0;
+  }
+}
+
+/* 文件夹进入动画效果（放大1.05，并霓虹粉蓝渐变发光） */
+.item.folder-enter {
+  animation: folderEnter 0.5s ease-out forwards;
+}
+@keyframes folderEnter {
+  0% {
+    transform: scale(1);
+    box-shadow: none;
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(255,45,149,0.7), 0 0 20px rgba(100,255,218,0.7);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: none;
+  }
+}
+
+/* 打字光标样式 */
+.cursor {
+  display: inline-block;
+  animation: blink 1s step-end infinite;
+}
+@keyframes blink {
+  from, to { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* 标题：采用霓虹渐变效果（赛博朋克风） */
+#pageTitle {
+  text-align: center;
+  font-size: 2.5em;
+  font-weight: bold;
+  font-family: 'Press Start 2P', sans-serif;
+  /* 使用背景渐变，并利用 text-fill-color 技巧 */
+  background: linear-gradient(45deg, #ff2d95, #64ffda, #ff2d95);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradientAnimation 3s ease infinite;
+  text-shadow: none;
+}
+@keyframes gradientAnimation {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+</style>
     
     
-    .item a {
-      text-decoration: none;
-      color: var(--link-color);
-      cursor: none;
-    }
-    .item a:hover {
-      text-decoration: underline;
-    }
-
-    /* =========================
-       6. 导航按钮
-       ========================= */
-    .nav-buttons {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 20px;
-    }
-    .nav-buttons button {
-      background-color: rgba(255, 255, 255, 0.7);
-      backdrop-filter: blur(8px);
-      color: #333;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 8px;
-      cursor: none;
-      font-size: 14px;
-      transition: all 0.2s ease;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    }
-    .nav-buttons button:hover {
-      background-color: rgba(255, 255, 255, 0.9);
-      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
-      transform: translateY(-2px);
-    }
-
-    /* =========================
-       7. 提示层
-       ========================= */
-    .floating-hint {
-      position: absolute;
-      top: 35%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: auto;
-      max-width: 320px;
-      background-color: rgba(255, 255, 255, 0.7);
-      backdrop-filter: blur(10px);
-      color: #333;
-      padding: 12px 20px;
-      border-radius: 20px;
-      font-size: 14px;
-      text-align: center;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      opacity: 0;
-      animation: fadeIn 1s forwards, fadeOut 5s 4s forwards;
-      cursor: none;
-      z-index: 99999;
-    }
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translate(-50%, -60%);
-      }
-      to {
-        opacity: 1;
-        transform: translate(-50%, -50%);
-      }
-    }
-    @keyframes fadeOut {
-      to {
-        opacity: 0;
-        transform: translate(-50%, -40%);
-      }
-    }
-
-    /* =========================
-       8. 音乐播放器
-       ========================= */
-    .music-widget {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      width: 280px;
-      background: var(--card-bg);
-      border-radius: 20px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.4);
-      font-family: 'Arial', sans-serif;
-      overflow: hidden;
-      transition: height 0.5s ease, background-color 0.5s ease;
-      z-index: 9999;
-    }
-    .music-widget.collapsed {
-      height: 50px;
-    }
-    .music-widget.expanded {
-      height: 340px;
-    }
-    .music-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 50px;
-      padding: 0 15px;
-      cursor: none;
-    }
-    .music-header .music-title {
-      font-size: 14px;
-      color: var(--text-color);
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      max-width: 70%;
-      transition: color 0.5s ease;
-    }
-    .music-header .music-toggle-btn {
-      font-size: 18px;
-      color: var(--text-color);
-      background: none;
-      border: none;
-      cursor: none;
-      transition: transform 0.3s ease, color 0.5s ease;
-    }
-    .music-header .music-toggle-btn:hover {
-      transform: scale(1.2);
-    }
-    .music-body {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      padding: 10px;
-      transition: opacity 0.3s ease;
-    }
-    .music-widget.expanded .music-body {
-      display: flex;
-    }
-    .song-cover-wrapper {
-      width: 100%;
-      height: 140px;
-      overflow: hidden;
-      border-radius: 15px;
-      clip-path: inset(0 round 15px);
-    }
-    .song-cover {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .song-status {
-      margin-top: 10px;
-      font-size: 14px;
-      color: #000000;
-      text-align: center;
-    }
-    .player-controls {
-      margin-top: 10px;
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-    }
-    .player-controls button {
-      background-color: rgba(255, 255, 255, 0.6);
-      backdrop-filter: blur(6px);
-      border: none;
-      border-radius: 8px;
-      padding: 5px 10px;
-      cursor: none;
-      font-size: 16px;
-      transition: background-color 0.3s ease;
-    }
-    .player-controls button:hover {
-      background-color: rgba(255, 255, 255, 0.8);
-    }
-    .progress-container {
-      margin-top: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-    .progress-container span {
-      font-size: 12px;
-      color: var(--text-color);
-      transition: color 0.5s ease;
-    }
-    .progress-bar {
-      width: 150px;
-      -webkit-appearance: none;
-      background: rgba(0,0,0,0.1);
-      height: 4px;
-      border-radius: 2px;
-      outline: none;
-      cursor: none;
-    }
-    .progress-bar::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      background: #d81b60;
-      border: 2px solid #fff;
-      cursor: none;
-    }
-
-    /* =========================
-       9. 花瓣（雪花）动画
-       ========================= */
-    .snowflake {
-      position: fixed;
-      top: -10px;
-      color: #ffffff;
-      pointer-events: none;
-      transform: rotate(var(--initial-rotation, 0deg));
-      animation: fall linear forwards;
-      z-index: 9998;
-    }
-    @keyframes fall {
-      to {
-        /* 最终位移 = Y方向落到底 + X方向受风 (windX) + 自身旋转 */
-        transform: translateX(var(--wind-offset, 0px)) translateY(100vh)
-                   rotate(calc(var(--initial-rotation, 0deg) + var(--rotate-amount, 360deg)));
-        opacity: 0;
-      }
-    }
-
-    /* =========================
-       10. 多端适配
-       ========================= */
-    @media screen and (max-width: 768px) {
-      .wrapper {
-        padding: 20px;
-      }
-      .container {
-        max-width: 100%;
-        margin: 30px auto 0 auto;
-        padding: 20px;
-      }
-      .file-manager {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      .item {
-        padding: 12px;
-      }
-      .item img {
-        width: 48px;
-        height: 48px;
-        margin-bottom: 8px;
-      }
-      .item span {
-        font-size: 12px;
-      }
-      .floating-hint {
-        top: 30%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        max-width: 320px;
-        background-color: rgba(255, 255, 255, 0.7);
-        backdrop-filter: blur(10px);
-        color: #333;
-        padding: 12px 20px;
-        border-radius: 20px;
-        font-size: 14px;
-        text-align: center;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        opacity: 0;
-        animation: fadeIn 1s forwards, fadeOut 5s 4s forwards;
-      }
-      .music-widget {
-        width: 90%;
-        right: 5%;
-      }
-      .music-widget.expanded {
-        height: 380px;
-      }
-      .song-cover-wrapper {
-        height: 160px;
-      }
-      h1 {
-        font-size: 20px;
-      }
-    }
-
-    /* =========================
-       11. 主题切换过渡层
-       ========================= */
-    #themeTransition {
-      position: fixed;
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 99998;
-      background: var(--bg-gradient);
-      transform: scale(0);
-      opacity: 1;
-      transition: transform 0.7s ease-in-out, opacity 0.7s ease-in-out;
-    }
-
-    /* =========================
-       12. 访客信息卡片的额外样式
-       ========================= */
-      /* 访客信息卡片：占两列、两行，去掉滚动条，减小间距 */
-    .visitor-card {
-      grid-column: span 2; /* 宽度占2列 */
-      grid-row: span 2;    /* 高度占2行 */
-      padding: 12px;       /* 适当减少内边距 */
-    }
-
-    /* 缩小图标尺寸，避免卡片过高 */
-    .visitor-card img {
-      margin-right: 12px;
-      width: 48px;
-      height: 48px;
-    }
-
-    /* 减小行距 */
-    /* 访客信息卡片：文字左对齐，每个 title 独占一行 */
-    .visitor-info-text {
-      text-align: left; /* 整体左对齐 */
-    }
-    
-    .info-line {
-      margin-bottom: 6px; /* 每条信息之间的间距 */
-    }
-    
-    .info-title {
-      display: inline;   /* 与内容在同一行 */
-      font-weight: bold;
-      margin-right: 6px; /* 标题与内容的间隔 */
-    }
-    
-    .info-value {
-      display: inline;   /* 与标题在同一行 */
-    }
-    /* 移动端也让它独占一行即可 */
-    @media screen and (max-width: 768px) {
-      .visitor-card {
-        /* 如果想在手机端保持两行高度，可不改；若想只占一行可改为 span 1 */
-        /* grid-row: span 1; */
-        padding: 10px;
-      }
-    }
-
-    /* 下载链接闪光进度条效果 - 弹性自然 */
-    a.flash-progress {
-      position: relative;
-      overflow: hidden;
-    }
-
-    a.flash-progress::after {
-      content: "";
-      position: absolute;
-      left: -100%;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(0, 150, 255, 0.6), transparent);
-      animation: flash-progress 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-    }
-
-    @keyframes flash-progress {
-      0% { left: -100%; }
-      50% { left: 100%; }
-      65% { left: 92%; }
-      80% { left: 107%; }
-      100% { left: 100%; }
-    }
-
-    /* 文件夹涟漪扩散效果 */
-    .item .ripple {
-      position: absolute;
-      border-radius: 50%;
-      background: rgba(0, 150, 255, 0.5);
-      transform: scale(0);
-      animation: ripple-animation 0.6s linear;
-      pointer-events: none;
-    }
-
-    @keyframes ripple-animation {
-      to {
-        transform: scale(4);
-        opacity: 0;
-      }
-    }
-
-
-    /* 彩带烟花效果 */
-    .firework {
-      position: fixed;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      opacity: 1;
-      pointer-events: none;
-      z-index: 100000; /* 加上这一行，确保火花显示在最上层 */
-      animation: firework-animation 1s ease-out forwards;
-    }
-    
-
-    @keyframes firework-animation {
-      0% {
-        transform: translate(0, 0) scale(1);
-        opacity: 1;
-      }
-      100% {
-        transform: translate(var(--x), var(--y)) scale(0.5);
-        opacity: 0;
-      }
-    }
-
-
-    /* 文件夹进入动画效果（放大1.05，并粉蓝渐变发光） */
-    .item.folder-enter {
-      animation: folderEnter 0.5s ease-out forwards;
-    }
-
-    @keyframes folderEnter {
-      0% {
-        transform: scale(1);
-        box-shadow: none;
-      }
-      50% {
-        transform: scale(1.05);
-        box-shadow: 0 0 10px rgba(255,182,193,0.7), 0 0 20px rgba(173,216,230,0.7);
-      }
-      100% {
-        transform: scale(1);
-        box-shadow: none;
-      }
-    }
-
-    /* 打字光标样式 */
-    .cursor {
-      display: inline-block;
-      animation: blink 1s step-end infinite;
-    }
-
-    @keyframes blink {
-      from, to { opacity: 1; }
-      50% { opacity: 0; }
-    }
-
-    #pageTitle {
-      font-family: 'Press Start 2P', 'ZCOOL QingKe HuangYou', monospace;
-      font-size: 2.5em; /* 可根据需要调整 */
-      letter-spacing: 0.1em;
-      color: #fff;
-      text-align: center;
-      /* 像素风阴影效果 */
-      text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
-    }
-    
-    
-    
-    @keyframes gradientAnimation {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-    
-
-
-
-
-
-  </style>
 </head>
 <body>
   <!-- 主题切换过渡层 -->
