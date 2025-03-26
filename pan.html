@@ -6,6 +6,10 @@
   <title>乐队网盘</title>
   <link rel="icon" type="image/png" href="cursor/pa.gif">
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=ZCOOL+QingKe+HuangYou&display=swap');
+
+
     /* =========================
        1. 全局 & 鼠标指针设置
        ========================= */
@@ -653,6 +657,38 @@
       }
     }
 
+    /* 打字光标样式 */
+    .cursor {
+      display: inline-block;
+      animation: blink 1s step-end infinite;
+    }
+
+    @keyframes blink {
+      from, to { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    #pageTitle {
+      font-family: 'Press Start 2P', 'ZCOOL QingKe HuangYou', monospace;
+      font-size: 2.5em; /* 可根据需要调整 */
+      letter-spacing: 0.1em;
+      color: #fff;
+      text-align: center;
+      /* 像素风阴影效果 */
+      text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+    }
+    
+    
+    
+    @keyframes gradientAnimation {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+
+
+
 
 
   </style>
@@ -672,7 +708,9 @@
     <div class="floating-hint" id="floatingHint">进文件夹请双击，点击“乐队网盘”切换主题</div>
     <div class="container">
       <!-- 标题作为主题切换按钮 -->
-      <h1 id="pageTitle">乐队网盘</h1>
+      <!-- <h1 id="pageTitle">乐队网盘</h1> -->
+      <h1 id="pageTitle"></h1>
+
       <div class="nav-buttons">
         <button onclick="goToMainMenu()">返回主菜单</button>
         <button onclick="goToPreviousMenu()">返回上一菜单</button>
@@ -1181,6 +1219,80 @@
         setTimeout(() => firework.remove(), 1000);
       }
     }
+
+
+    const titleEl = document.getElementById('pageTitle');
+    // 定义拼音和对应汉字的数组
+    const words = [
+      { pinyin: "yue", character: "乐" },
+      { pinyin: "dui", character: "队" },
+      { pinyin: "wang", character: "网" },
+      { pinyin: "pan", character: "盘" }
+    ];
+    
+    let typingWordIndex = 0;
+    let currentText = "";
+    let cycleCount = 0;  // 记录完整周期数
+    
+    function typeNextWord() {
+      const { pinyin, character } = words[typingWordIndex];
+      let letterIndex = 0;
+      
+      // 逐字打出拼音
+      function typePinyin() {
+        if (letterIndex < pinyin.length) {
+          currentText += pinyin[letterIndex];
+          titleEl.innerHTML = currentText + '<span class="cursor">|</span>';
+          letterIndex++;
+          setTimeout(typePinyin, 200); // 拼音打字速度
+        } else {
+          // 完成拼音后，替换成汉字
+          currentText = currentText.slice(0, -pinyin.length) + character;
+          titleEl.innerHTML = currentText + '<span class="cursor">|</span>';
+          setTimeout(() => {
+            typingWordIndex++;
+            // 如果已经到数组末尾，表示完成了一个完整周期
+            if (typingWordIndex >= words.length) {
+              typingWordIndex = 0;
+              cycleCount++;
+              // 当循环两次后，开始删除整个标题
+              if (cycleCount >= 2) {
+                deleteText();
+                return;
+              }
+            }
+            typeNextWord();
+          }, 1000); // 显示汉字时间
+        }
+      }
+      
+      typePinyin();
+    }
+    
+    function deleteText() {
+      // 逐字删除当前显示的文本
+      if (currentText.length > 0) {
+        currentText = currentText.slice(0, -1);
+        titleEl.innerHTML = currentText + '<span class="cursor">|</span>';
+        setTimeout(deleteText, 100); // 删除速度
+      } else {
+        // 删除完毕后重置计数并重新开始打字
+        cycleCount = 0;
+        startTyping();
+      }
+    }
+    
+    function startTyping() {
+      currentText = "";
+      typingWordIndex = 0;
+      typeNextWord();
+    }
+    
+    startTyping();
+    
+
+
+    
     
 
   </script>
