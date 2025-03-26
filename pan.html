@@ -886,11 +886,14 @@
       const snowflake = document.createElement('div');
       snowflake.classList.add('snowflake');
       // 使用花瓣符号或emoji
-      snowflake.innerHTML = '🌸';
+      // snowflake.innerHTML = '🌸';
+      const emojis = ['👊', '🇺🇸', '🔥'];
+      snowflake.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
+
       // 随机水平位置
       snowflake.style.left = Math.random() * 100 + 'vw';
       // 随机不透明度与字体大小
-      snowflake.style.opacity = Math.random() * 0.8 + 0.2;
+      snowflake.style.opacity = Math.random() * 0.7 + 0.3;
       snowflake.style.fontSize = Math.random() * 20 + 10 + 'px';
       // 随机初始旋转和旋转增量
       const initRot = Math.floor(Math.random() * 360) + 'deg';
@@ -905,7 +908,7 @@
         snowflake.remove();
       }, animDuration * 1000);
     }
-    setInterval(createSnow, 200);
+    setInterval(createSnow, 100);
 
   </script>
 
