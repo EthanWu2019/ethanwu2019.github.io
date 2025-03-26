@@ -209,7 +209,7 @@
       left: 50%;
       width: 0;
       height: 0;
-      background-color: rgba(255, 255, 255, 0.3);
+      background: linear-gradient(45deg, rgba(255,153,204,0.3), rgba(102,204,255,0.3));
       border-radius: 50%;
       transform: translate(-50%, -50%);
       pointer-events: none;
@@ -221,6 +221,8 @@
       height: 200%;
       opacity: 1;
     }
+    
+    
     .item a {
       text-decoration: none;
       color: var(--link-color);
@@ -562,6 +564,97 @@
         padding: 10px;
       }
     }
+
+    /* 下载链接闪光进度条效果 - 弹性自然 */
+    a.flash-progress {
+      position: relative;
+      overflow: hidden;
+    }
+
+    a.flash-progress::after {
+      content: "";
+      position: absolute;
+      left: -100%;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0, 150, 255, 0.6), transparent);
+      animation: flash-progress 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    }
+
+    @keyframes flash-progress {
+      0% { left: -100%; }
+      50% { left: 100%; }
+      65% { left: 92%; }
+      80% { left: 107%; }
+      100% { left: 100%; }
+    }
+
+    /* 文件夹涟漪扩散效果 */
+    .item .ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(0, 150, 255, 0.5);
+      transform: scale(0);
+      animation: ripple-animation 0.6s linear;
+      pointer-events: none;
+    }
+
+    @keyframes ripple-animation {
+      to {
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+
+
+    /* 彩带烟花效果 */
+    .firework {
+      position: fixed;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      opacity: 1;
+      pointer-events: none;
+      z-index: 100000; /* 加上这一行，确保火花显示在最上层 */
+      animation: firework-animation 1s ease-out forwards;
+    }
+    
+
+    @keyframes firework-animation {
+      0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(var(--x), var(--y)) scale(0.5);
+        opacity: 0;
+      }
+    }
+
+
+    /* 文件夹进入动画效果（放大1.05，并粉蓝渐变发光） */
+    .item.folder-enter {
+      animation: folderEnter 0.5s ease-out forwards;
+    }
+
+    @keyframes folderEnter {
+      0% {
+        transform: scale(1);
+        box-shadow: none;
+      }
+      50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 10px rgba(255,182,193,0.7), 0 0 20px rgba(173,216,230,0.7);
+      }
+      100% {
+        transform: scale(1);
+        box-shadow: none;
+      }
+    }
+
+
+
   </style>
 </head>
 <body>
@@ -720,10 +813,17 @@
             <span>${name}</span>
           `;
           folderDiv.ondblclick = () => {
-            currentPath.push(name);
-            updateBreadcrumb();
-            loadFiles(currentPath);
-          };
+            // 添加进入动画效果
+            folderDiv.classList.add("folder-enter");
+            // 动画结束后（0.5秒）再进入文件夹
+            setTimeout(() => {
+              folderDiv.classList.remove("folder-enter");
+              currentPath.push(name);
+              updateBreadcrumb();
+              loadFiles(currentPath);
+            }, 300);
+          };          
+          
           fileManager.appendChild(folderDiv);
         } else {
           // 文件
@@ -780,6 +880,8 @@
             document.getElementById('ipValue').textContent = '获取失败';
           });
       }
+
+
     }
 
     function getFileIcon(filename) {
@@ -1041,6 +1143,46 @@
       const s = Math.floor(seconds % 60);
       return `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
     }
+
+    // 为所有下载链接添加闪光动画和烟花效果
+    document.addEventListener('click', function(e) {
+      if (e.target.tagName === 'A' && e.target.hasAttribute('download')) {
+        const link = e.target;
+        // 添加闪光动画类（保留原有效果）
+        link.classList.add('flash-progress');
+        // 同时触发烟花效果，在点击位置（e.clientX, e.clientY）
+        createFireworks(e.clientX, e.clientY);
+        // 1秒后移除类，允许下次点击再次触发动画
+        setTimeout(() => {
+          link.classList.remove('flash-progress');
+        }, 1000);
+      }
+    });
+
+
+
+
+    function createFireworks(x, y) {
+      // 生成 20 个火花，每个火花方向和距离随机
+      for (let i = 0; i < 50; i++) {
+        const firework = document.createElement('div');
+        firework.classList.add('firework');
+        firework.style.left = x + 'px';
+        firework.style.top = y + 'px';
+        const angle = Math.random() * 2 * Math.PI;
+        const distance = Math.random() * 100 + 50; // 随机距离 50~150px
+        const dx = Math.cos(angle) * distance + "px";
+        const dy = Math.sin(angle) * distance + "px";
+        firework.style.setProperty('--x', dx);
+        firework.style.setProperty('--y', dy);
+        // 随机颜色
+        firework.style.backgroundColor = 'hsl(' + Math.floor(Math.random() * 360) + ', 70%, 50%)';
+        document.body.appendChild(firework);
+        setTimeout(() => firework.remove(), 1000);
+      }
+    }
+    
+
   </script>
 </body>
 </html>
