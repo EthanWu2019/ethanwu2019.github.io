@@ -27,32 +27,101 @@ body, button, a, .floating-hint, .music-header, .music-toggle-btn, .player-contr
 }
 
 /* =========================
-   2. 主题相关：日间/夜间
+   2. 主题相关：4 套季节主题（日间与夜间）
    ========================= */
-/* —— 日间模式（赛博朋克白天风）：主色调为深蓝/紫，霓虹粉与蓝绿点缀 —— */
-:root {
-  --bg-gradient: linear-gradient(135deg, #141e30, #243b55);  /* 深蓝渐变背景 */
-  --text-color: #e0e0e0;       /* 浅灰文字 */
-  --title-color: #ff2d95;      /* 霓虹粉标题 */
-  --container-bg: rgba(20,30,48,0.8);  /* 深色半透明容器 */
-  --card-bg: rgba(20,30,48,0.9);       /* 卡片背景 */
-  --loader-bg: linear-gradient(135deg, rgba(20,30,48,0.95), rgba(36,55,85,0.95));
-  --link-color: #64ffda;       /* 霓虹蓝绿链接 */
-  --card-text: #e0e0e0;        /* 卡片文字颜色 */
+
+/* 默认采用春季主题（日间） */
+.theme-spring {
+  --bg-gradient: linear-gradient(135deg, #e0f7e9, #fceef5); /* 浅绿 → 浅粉 */
+  --text-color: #333;
+  --title-color: #c2185b;
+  --container-bg: rgba(255,255,255,0.8);
+  --card-bg: rgba(255,255,255,0.9);
+  --loader-bg: linear-gradient(135deg, rgba(224,247,233,0.95), rgba(252,238,245,0.95));
+  --link-color: #d81b60;
+  --card-text: #555;
   --wind-offset: 0px;
 }
 
-/* —— 夜间模式（赛博朋克夜）：更暗、更冷的调调 */
-.dark-theme {
-  --bg-gradient: linear-gradient(135deg, #0d0d0d, #1a1a1a);
-  --text-color: #a8a8a8;
-  --title-color: #ff2d95;
-  --container-bg: rgba(30,30,30,0.8);
-  --card-bg: rgba(30,30,30,0.9);
-  --loader-bg: linear-gradient(135deg, rgba(20,20,20,0.95), rgba(40,40,40,0.95));
-  --link-color: #64ffda;
-  --card-text: #a8a8a8;
+.theme-summer {
+  --bg-gradient: linear-gradient(135deg, #fff3e0, #ffe0b2); /* 柔和橙黄 */
+  --text-color: #222;
+  --title-color: #d84315;
+  --container-bg: rgba(255,255,255,0.8);
+  --card-bg: rgba(255,255,255,0.9);
+  --loader-bg: linear-gradient(135deg, rgba(255,243,224,0.95), rgba(255,224,178,0.95));
+  --link-color: #fdd835;
+  --card-text: #424242;
   --wind-offset: 0px;
+}
+
+.theme-autumn {
+  --bg-gradient: linear-gradient(135deg, #fbe9e7, #ffccbc); /* 浅橙 → 浅棕 */
+  --text-color: #4e342e;
+  --title-color: #bf360c;
+  --container-bg: rgba(255,255,255,0.8);
+  --card-bg: rgba(255,255,255,0.9);
+  --loader-bg: linear-gradient(135deg, rgba(251,233,231,0.95), rgba(255,204,188,0.95));
+  --link-color: #ef6c00;
+  --card-text: #5d4037;
+  --wind-offset: 0px;
+}
+
+.theme-winter {
+  --bg-gradient: linear-gradient(135deg, #e3f2fd, #90caf9); /* 冰蓝渐变 */
+  --text-color: #0d47a1;
+  --title-color: #1e88e5;
+  --container-bg: rgba(255,255,255,0.8);
+  --card-bg: rgba(255,255,255,0.9);
+  --loader-bg: linear-gradient(135deg, rgba(227,242,253,0.95), rgba(144,202,249,0.95));
+  --link-color: #64b5f6;
+  --card-text: #0d47a1;
+  --wind-offset: 0px;
+}
+
+/* 夜间模式：在原有 dark-theme 的基础上，再叠加季节主题 */
+.dark-theme.theme-spring {
+  --bg-gradient: linear-gradient(135deg, #2a3b2c, #3c4e3f);
+  --text-color: #ccc;
+  --title-color: #ff80ab;
+  --container-bg: rgba(42,59,44,0.8);
+  --card-bg: rgba(42,59,44,0.9);
+  --loader-bg: linear-gradient(135deg, rgba(42,59,44,0.95), rgba(60,78,60,0.95));
+  --link-color: #ff80ab;
+  --card-text: #bbb;
+}
+
+.dark-theme.theme-summer {
+  --bg-gradient: linear-gradient(135deg, #4e342e, #6d4c41);
+  --text-color: #ddd;
+  --title-color: #ffab40;
+  --container-bg: rgba(78,52,46,0.8);
+  --card-bg: rgba(78,52,46,0.9);
+  --loader-bg: linear-gradient(135deg, rgba(78,52,46,0.95), rgba(108,80,75,0.95));
+  --link-color: #ffab40;
+  --card-text: #ccc;
+}
+
+.dark-theme.theme-autumn {
+  --bg-gradient: linear-gradient(135deg, #3e2723, #5d4037);
+  --text-color: #eee;
+  --title-color: #ff7043;
+  --container-bg: rgba(62,39,35,0.8);
+  --card-bg: rgba(62,39,35,0.9);
+  --loader-bg: linear-gradient(135deg, rgba(62,39,35,0.95), rgba(94,59,48,0.95));
+  --link-color: #ff7043;
+  --card-text: #ddd;
+}
+
+.dark-theme.theme-winter {
+  --bg-gradient: linear-gradient(135deg, #263238, #37474f);
+  --text-color: #b0bec5;
+  --title-color: #82b1ff;
+  --container-bg: rgba(38,50,56,0.8);
+  --card-bg: rgba(38,50,56,0.9);
+  --loader-bg: linear-gradient(135deg, rgba(38,50,56,0.95), rgba(55,71,79,0.95));
+  --link-color: #82b1ff;
+  --card-text: #b0bec5;
 }
 
 /* =========================
@@ -88,7 +157,7 @@ body {
   border-radius: 12px;
   background-color: var(--container-bg);
   backdrop-filter: blur(10px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   box-sizing: border-box;
   position: relative;
   z-index: 1;
@@ -130,7 +199,7 @@ h1:hover {
   opacity: 1;
   left: 80%;
   top: 15%;
-  animation: moveNote 2s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+  animation: moveNote 2s cubic-bezier(0.25,0.1,0.25,1) forwards;
 }
 @keyframes moveNote {
   0% {
@@ -184,7 +253,7 @@ h1:hover {
   border-radius: 12px;
   padding: 16px;
   text-align: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   cursor: none;
   transform-style: preserve-3d;
   perspective: 2000px;
@@ -204,7 +273,7 @@ h1:hover {
 }
 .item:hover {
   transform: perspective(1000px) rotateX(5deg) rotateY(5deg) translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
 }
 .item::before {
   content: "";
@@ -252,11 +321,11 @@ h1:hover {
   cursor: none;
   font-size: 14px;
   transition: all 0.2s ease;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
 }
 .nav-buttons button:hover {
   background-color: rgba(20,30,48,0.9);
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.6);
   transform: translateY(-2px);
 }
 
@@ -277,7 +346,7 @@ h1:hover {
   border-radius: 20px;
   font-size: 14px;
   text-align: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
   opacity: 0;
   animation: fadeIn 1s forwards, fadeOut 5s 4s forwards;
   cursor: none;
@@ -310,7 +379,7 @@ h1:hover {
   width: 280px;
   background: var(--card-bg);
   border-radius: 20px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.6);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(20,30,48,0.8);
   font-family: 'Arial', sans-serif;
@@ -650,7 +719,6 @@ a.flash-progress::after {
   font-size: 2.5em;
   font-weight: bold;
   font-family: 'Press Start 2P', sans-serif;
-  /* 使用背景渐变，并利用 text-fill-color 技巧 */
   background: linear-gradient(45deg, #ff2d95, #64ffda, #ff2d95);
   background-size: 200% 200%;
   -webkit-background-clip: text;
@@ -1266,6 +1334,27 @@ a.flash-progress::after {
     startTyping();
     
 
+    // 默认采用春季主题（日间模式），确保 body 上初始添加该 class
+    document.body.classList.add('theme-spring');
+
+    // 监听数字键，切换主题
+    document.addEventListener('keydown', function(e) {
+      // 只响应数字键 1~4
+      if (['1','2','3','4'].includes(e.key)) {
+        // 移除其它季节主题类
+        document.body.classList.remove('theme-spring', 'theme-summer', 'theme-autumn', 'theme-winter');
+        // 根据按键添加对应主题
+        if (e.key === '1') {
+          document.body.classList.add('theme-spring');
+        } else if (e.key === '2') {
+          document.body.classList.add('theme-summer');
+        } else if (e.key === '3') {
+          document.body.classList.add('theme-autumn');
+        } else if (e.key === '4') {
+          document.body.classList.add('theme-winter');
+        }
+      }
+    });
 
     
     
