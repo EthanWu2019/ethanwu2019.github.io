@@ -30,9 +30,9 @@ body, button, a, .floating-hint, .music-header, .music-toggle-btn, .player-contr
    2. 主题相关：4 套季节主题（日间与夜间）
    ========================= */
 
-/* 默认采用春季主题（日间） */
+/* —— 春季（日间）：浅绿 → 浅粉 */
 .theme-spring {
-  --bg-gradient: linear-gradient(135deg, #e0f7e9, #fceef5); /* 浅绿 → 浅粉 */
+  --bg-gradient: linear-gradient(135deg, #e0f7e9, #fceef5);
   --text-color: #333;
   --title-color: #c2185b;
   --container-bg: rgba(255,255,255,0.8);
@@ -43,8 +43,9 @@ body, button, a, .floating-hint, .music-header, .music-toggle-btn, .player-contr
   --wind-offset: 0px;
 }
 
+/* —— 夏季（日间）：柔和橙黄 */
 .theme-summer {
-  --bg-gradient: linear-gradient(135deg, #fff3e0, #ffe0b2); /* 柔和橙黄 */
+  --bg-gradient: linear-gradient(135deg, #fff3e0, #ffe0b2);
   --text-color: #222;
   --title-color: #d84315;
   --container-bg: rgba(255,255,255,0.8);
@@ -55,8 +56,9 @@ body, button, a, .floating-hint, .music-header, .music-toggle-btn, .player-contr
   --wind-offset: 0px;
 }
 
+/* —— 秋季（日间）：浅橙 → 浅棕 */
 .theme-autumn {
-  --bg-gradient: linear-gradient(135deg, #fbe9e7, #ffccbc); /* 浅橙 → 浅棕 */
+  --bg-gradient: linear-gradient(135deg, #fbe9e7, #ffccbc);
   --text-color: #4e342e;
   --title-color: #bf360c;
   --container-bg: rgba(255,255,255,0.8);
@@ -67,8 +69,9 @@ body, button, a, .floating-hint, .music-header, .music-toggle-btn, .player-contr
   --wind-offset: 0px;
 }
 
+/* —— 冬季（日间）：冰蓝渐变 */
 .theme-winter {
-  --bg-gradient: linear-gradient(135deg, #e3f2fd, #90caf9); /* 冰蓝渐变 */
+  --bg-gradient: linear-gradient(135deg, #e3f2fd, #90caf9);
   --text-color: #0d47a1;
   --title-color: #1e88e5;
   --container-bg: rgba(255,255,255,0.8);
@@ -79,7 +82,7 @@ body, button, a, .floating-hint, .music-header, .music-toggle-btn, .player-contr
   --wind-offset: 0px;
 }
 
-/* 夜间模式：在原有 dark-theme 的基础上，再叠加季节主题 */
+/* —— 夜间模式：基于 dark-theme 叠加季节颜色 */
 .dark-theme.theme-spring {
   --bg-gradient: linear-gradient(135deg, #2a3b2c, #3c4e3f);
   --text-color: #ccc;
@@ -122,6 +125,32 @@ body, button, a, .floating-hint, .music-header, .music-toggle-btn, .player-contr
   --loader-bg: linear-gradient(135deg, rgba(38,50,56,0.95), rgba(55,71,79,0.95));
   --link-color: #82b1ff;
   --card-text: #b0bec5;
+}
+
+/* 针对不同季节，卡片 hover 的背景渐变调整 */
+.theme-spring .item:hover::before {
+  background: linear-gradient(45deg, rgba(200,230,201,0.4), rgba(255,205,210,0.4));
+}
+.theme-summer .item:hover::before {
+  background: linear-gradient(45deg, rgba(255,241,118,0.4), rgba(255,224,178,0.4));
+}
+.theme-autumn .item:hover::before {
+  background: linear-gradient(45deg, rgba(255,183,77,0.4), rgba(229,115,115,0.4));
+}
+.theme-winter .item:hover::before {
+  background: linear-gradient(45deg, rgba(144,202,249,0.4), rgba(129,212,250,0.4));
+}
+.dark-theme.theme-spring .item:hover::before {
+  background: linear-gradient(45deg, rgba(156,204,101,0.3), rgba(244,143,177,0.3));
+}
+.dark-theme.theme-summer .item:hover::before {
+  background: linear-gradient(45deg, rgba(255,241,118,0.3), rgba(255,224,178,0.3));
+}
+.dark-theme.theme-autumn .item:hover::before {
+  background: linear-gradient(45deg, rgba(255,183,77,0.3), rgba(229,115,115,0.3));
+}
+.dark-theme.theme-winter .item:hover::before {
+  background: linear-gradient(45deg, rgba(144,202,249,0.3), rgba(129,212,250,0.3));
 }
 
 /* =========================
@@ -282,6 +311,7 @@ h1:hover {
   left: 50%;
   width: 0;
   height: 0;
+  /* 默认 hover 渐变背景，此处会被各主题覆盖 */
   background: linear-gradient(45deg, rgba(255,45,149,0.3), rgba(100,255,218,0.3));
   border-radius: 50%;
   transform: translate(-50%, -50%);
@@ -748,7 +778,7 @@ a.flash-progress::after {
 
   <div class="wrapper">
     <!-- 浮动提示 -->
-    <div class="floating-hint" id="floatingHint">进文件夹请双击，电脑端按1234试试呢</div>
+    <div class="floating-hint" id="floatingHint">进文件夹请双击，电脑端试试按1234</div>
     <div class="container">
       <!-- 标题作为主题切换按钮 -->
       <!-- <h1 id="pageTitle">乐队网盘</h1> -->
@@ -1091,7 +1121,7 @@ a.flash-progress::after {
         snowflake.remove();
       }, animDuration * 1000);
     }
-    setInterval(createSnow, 100);
+    setInterval(createSnow, 300);
 
   </script>
 
@@ -1335,26 +1365,26 @@ a.flash-progress::after {
     
 
     // 默认采用春季主题（日间模式），确保 body 上初始添加该 class
-    document.body.classList.add('theme-spring');
+  document.body.classList.add('theme-spring');
 
-    // 监听数字键，切换主题
-    document.addEventListener('keydown', function(e) {
-      // 只响应数字键 1~4
-      if (['1','2','3','4'].includes(e.key)) {
-        // 移除其它季节主题类
-        document.body.classList.remove('theme-spring', 'theme-summer', 'theme-autumn', 'theme-winter');
-        // 根据按键添加对应主题
-        if (e.key === '1') {
-          document.body.classList.add('theme-spring');
-        } else if (e.key === '2') {
-          document.body.classList.add('theme-summer');
-        } else if (e.key === '3') {
-          document.body.classList.add('theme-autumn');
-        } else if (e.key === '4') {
-          document.body.classList.add('theme-winter');
-        }
+  // 监听数字键，切换主题
+  document.addEventListener('keydown', function(e) {
+    // 只响应数字键 1~4
+    if (['1','2','3','4'].includes(e.key)) {
+      // 移除其它季节主题类
+      document.body.classList.remove('theme-spring', 'theme-summer', 'theme-autumn', 'theme-winter');
+      // 根据按键添加对应主题
+      if (e.key === '1') {
+        document.body.classList.add('theme-spring');
+      } else if (e.key === '2') {
+        document.body.classList.add('theme-summer');
+      } else if (e.key === '3') {
+        document.body.classList.add('theme-autumn');
+      } else if (e.key === '4') {
+        document.body.classList.add('theme-winter');
       }
-    });
+    }
+  });
 
     
     
