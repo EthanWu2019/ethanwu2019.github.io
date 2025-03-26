@@ -615,6 +615,9 @@
 
   <!-- audio 元素 -->
   <audio id="audio-player"></audio>
+  <!-- 开场BGM音频元素 -->
+<audio id="introBgm" src="music/saki.wav"></audio>
+
 
   <script>
     /* ============== 加载动画 JS ============== */
@@ -625,10 +628,28 @@
       note.classList.add('loader-note');
       note.src = noteImgSrc;
       loaderOverlay.appendChild(note);
+    
+      // 播放开场BGM
+      const introBgm = document.getElementById("introBgm");
+      introBgm.muted = true; // 先静音播放
+      introBgm.play();
+      // 当用户点击页面时解除静音
+      document.addEventListener('click', () => {
+        introBgm.muted = false;
+      }, { once: true });
+
+      // 3秒后停止BGM（同时重置到开头）
+      setTimeout(() => {
+        introBgm.pause();
+        introBgm.currentTime = 0;
+      }, 3000);
+    
+      // 根据加载动画设定隐藏遮罩层（如果你需要调整时间也可以对应修改）
       setTimeout(() => {
         loaderOverlay.style.display = "none";
       }, 2000);
     });
+    
 
     /* ============== 自定义鼠标指针 JS ============== */
     const customCursor = document.querySelector('.custom-cursor');
